@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Direct Marketing Mastery School - Learn Marketing From First Principles</title>
+  <meta name="description" content="Master marketing from first principles. Not tool tutorials. Own your platform, own your audience. Courses on research, traffic, funnels, and email marketing.">
+  
+  <link rel="stylesheet" href="/css/main.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+  <script src="/js/utm.js"></script>
+  <script src="/js/theme.js"></script>
+  <script src="/js/auth.js"></script>
+</head>
+<body>
+  <a href="#main-content" class="skip-link">Skip to main content</a>
+  
+  <header class="header">
+    <div class="header__inner">
+      <a href="/" class="header__logo">F.O.T.F. School</a>
+      <nav class="header__nav">
+        <a href="/courses/">Courses</a>
+        <a href="/blog/">Blog</a>
+        <a href="/services.html">Consulting</a>
+        <template x-if="!$store.auth.isAuthenticated">
+          <a href="/login.html" class="btn btn--primary" style="padding: var(--space-2) var(--space-4);">Sign In</a>
+        </template>
+        <template x-if="$store.auth.isAuthenticated">
+          <a href="/dashboard/">Dashboard</a>
+        </template>
+        <button class="theme-toggle" @click="$store.theme.toggle()" :aria-label="'Toggle ' + ($store.theme.mode === 'dark' ? 'light' : 'dark') + ' mode'">
+          <svg x-show="$store.theme.mode === 'dark'" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+          </svg>
+          <svg x-show="$store.theme.mode === 'light'" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+          </svg>
+        </button>
+      </nav>
+    </div>
+  </header>
+  
+  <main id="main-content">
+    <!-- Hero Section -->
+    <section class="section" style="padding-top: var(--space-20);">
+      <div class="container">
+        <div class="text-center" style="max-width: 800px; margin: 0 auto;">
+          <h1 style="font-size: var(--text-3xl); margin-bottom: var(--space-6);">
+            Stop Building on Borrowed Ground
+          </h1>
+          <p style="font-size: var(--text-xl); color: var(--text-secondary); margin-bottom: var(--space-8);">
+            Master marketing from first principles. Own your platform. Own your audience. 
+            No platform tax. No revenue share. Ever.
+          </p>
+          <div style="display: flex; gap: var(--space-4); justify-content: center; flex-wrap: wrap;">
+            <a href="/courses/" class="btn btn--primary" style="font-size: var(--text-lg); padding: var(--space-4) var(--space-8);">Explore Courses</a>
+            <a href="/blog/" class="btn btn--outline" style="font-size: var(--text-lg); padding: var(--space-4) var(--space-8);">Read the Blog</a>
+          </div>
+        </div>
+      </div>
+    </section>
+    
+    <!-- Features Section -->
+    <section class="section" style="background: var(--bg-secondary);">
+      <div class="container">
+        <h2 class="section__title">What You'll Learn</h2>
+        
+        <div class="grid grid--3">
+          <div class="card text-center">
+            <div style="font-size: 3rem; margin-bottom: var(--space-4);">🔍</div>
+            <h3>Research</h3>
+            <p style="color: var(--text-secondary);">Understand your market, find opportunities, and validate ideas before investing.</p>
+          </div>
+          
+          <div class="card text-center">
+            <div style="font-size: 3rem; margin-bottom: var(--space-4);">🚀</div>
+            <h3>Traffic</h3>
+            <p style="color: var(--text-secondary);">Master organic and paid acquisition channels that scale sustainably.</p>
+          </div>
+          
+          <div class="card text-center">
+            <div style="font-size: 3rem; margin-bottom: var(--space-4);">🔄</div>
+            <h3>Funnels</h3>
+            <p style="color: var(--text-secondary);">Build conversion systems that turn visitors into customers automatically.</p>
+          </div>
+        </div>
+        
+        <div class="grid grid--2" style="margin-top: var(--space-8);">
+          <div class="card text-center">
+            <div style="font-size: 3rem; margin-bottom: var(--space-4);">📧</div>
+            <h3>Email Marketing</h3>
+            <p style="color: var(--text-secondary);">Create automated sequences that nurture, convert, and retain customers.</p>
+          </div>
+          
+          <div class="card text-center">
+            <div style="font-size: 3rem; margin-bottom: var(--space-4);">📈</div>
+            <h3>Advanced</h3>
+            <p style="color: var(--text-secondary);">Scaling strategies, analytics, and optimization for long-term growth.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+    
+    <!-- CTA Section -->
+    <section class="section">
+      <div class="container">
+        <div class="card text-center" style="max-width: 600px; margin: 0 auto;">
+          <h2>Ready to Own Your Marketing?</h2>
+          <p style="color: var(--text-secondary); margin-bottom: var(--space-6);">
+            Start with free lessons or dive into a full course. Your platform, your data, your business.
+          </p>
+          <a href="/register.html" class="btn btn--primary" style="font-size: var(--text-lg); padding: var(--space-4) var(--space-8);">Get Started Free</a>
+        </div>
+      </div>
+    </section>
+  </main>
+  
+  <footer class="footer">
+    <div class="footer__inner">
+      <p>&copy; 2026 Direct Marketing Mastery School. All rights reserved.</p>
+      <p style="margin-top: var(--space-4);">
+        <a href="/services.html">Consulting</a> • 
+        <a href="/blog/">Blog</a> • 
+        <a href="/courses/">Courses</a>
+      </p>
+    </div>
+  </footer>
+</body>
+</html>

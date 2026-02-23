@@ -1,0 +1,46 @@
+graph TD
+  subgraph Pages["Cloudflare Pages — Static HTML + Alpine.js"]
+    Home[Homepage]
+    Blog[Blog Pages]
+    Courses[Course Catalog]
+    Dashboard[Student Dashboard]
+    Lesson[Lesson Player]
+    Admin[Admin Panel]
+  end
+
+  subgraph Worker["Cloudflare Worker — TypeScript + Hono"]
+    Auth[Auth Routes]
+    API[API Routes]
+    Webhooks[Webhook Handlers]
+    SEO[SEO Meta Injection]
+    subgraph Libs["Lib Layer"]
+      StripeLib[stripe.ts]
+      EmailLib[emailit.ts]
+      EncLib[encharge.ts]
+      AuthLib[auth.ts]
+      SanitizeLib[sanitize.ts]
+    end
+  end
+
+  subgraph CF["Cloudflare Data"]
+    D1[(D1 SQLite)]
+    R2[(R2 Storage)]
+  end
+
+  subgraph Ext["Third-Party Integrations"]
+    Stripe[Stripe]
+    Emailit[Emailit]
+    Encharge[Encharge]
+    Cal[Cal.com]
+    GTM[Google Tag Manager]
+  end
+
+  Pages -->|/api/* requests| Worker
+  Worker --> D1
+  Worker --> R2
+  Worker --> StripeLib --> Stripe
+  Worker --> EmailLib --> Emailit
+  Worker --> EncLib --> Encharge
+  Stripe -->|Webhooks| Webhooks
+  Cal -->|Webhooks| Webhooks
+  Pages --> GTM

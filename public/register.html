@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Create Account - Direct Marketing Mastery School</title>
+  <meta name="description" content="Create your free account to access free lessons and track your progress.">
+  
+  <link rel="stylesheet" href="/css/main.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+  <script src="/js/utm.js"></script>
+  <script src="/js/theme.js"></script>
+  <script src="/js/auth.js"></script>
+</head>
+<body>
+  <a href="#main-content" class="skip-link">Skip to main content</a>
+  
+  <header class="header">
+    <div class="header__inner">
+      <a href="/" class="header__logo">F.O.T.F. School</a>
+      <nav class="header__nav">
+        <a href="/courses/">Courses</a>
+        <a href="/blog/">Blog</a>
+        <button class="theme-toggle" @click="$store.theme.toggle()" :aria-label="'Toggle ' + ($store.theme.mode === 'dark' ? 'light' : 'dark') + ' mode'">
+          <svg x-show="$store.theme.mode === 'dark'" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+          </svg>
+          <svg x-show="$store.theme.mode === 'light'" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+          </svg>
+        </button>
+      </nav>
+    </div>
+  </header>
+  
+  <main id="main-content">
+    <section class="section">
+      <div class="container">
+        <div class="auth-container" style="max-width: 400px; margin: 0 auto;">
+          <div class="card">
+            <h1 class="text-center">Create Your Account</h1>
+            <p class="text-center text-muted" style="color: var(--text-muted);">Start your marketing mastery journey today</p>
+            
+            <form 
+              x-data="{
+                name: '',
+                email: '',
+                password: '',
+                passwordConfirm: '',
+                loading: false,
+                error: null,
+                passwordError: null,
+                
+                validatePassword() {
+                  if (this.password.length < 8) {
+                    this.passwordError = 'Password must be at least 8 characters';
+                    return false;
+                  }
+                  if (this.password !== this.passwordConfirm) {
+                    this.passwordError = 'Passwords do not match';
+                    return false;
+                  }
+                  this.passwordError = null;
+                  return true;
+                },
+                
+                async submit() {
+                  if (!this.validatePassword()) return;
+                  
+                  this.loading = true;
+                  this.error = null;
+                  
+                  const result = await $store.auth.register(this.email, this.password, this.name);
+                  
+                  if (result.success) {
+                    window.location.href = '/dashboard/';
+                  } else {
+                    this.error = result.error;
+                  }
+                  
+                  this.loading = false;
+                }
+              }"
+              @submit.prevent="submit"
+              style="margin-top: var(--space-8);"
+            >
+              <div class="form-group">
+                <label for="name">Full Name (optional)</label>
+                <input 
+                  type="text" 
+                  id="name" 
+                  x-model="name"
+                  autocomplete="name"
+                  placeholder="John Doe"
+                >
+              </div>
+              
+              <div class="form-group">
+                <label for="email">Email</label>
+                <input 
+                  type="email" 
+                  id="email" 
+                  x-model="email"
+                  required
+                  autocomplete="email"
+                  placeholder="you@example.com"
+                >
+              </div>
+              
+              <div class="form-group">
+                <label for="password">Password</label>
+                <input 
+                  type="password" 
+                  id="password" 
+                  x-model="password"
+                  @blur="validatePassword()"
+                  required
+                  autocomplete="new-password"
+                  placeholder="••••••••"
+                  minlength="8"
+                >
+              </div>
+              
+              <div class="form-group">
+                <label for="password-confirm">Confirm Password</label>
+                <input 
+                  type="password" 
+                  id="password-confirm" 
+                  x-model="passwordConfirm"
+                  @blur="validatePassword()"
+                  required
+                  autocomplete="new-password"
+                  placeholder="••••••••"
+                >
+              </div>
+              
+              <div x-show="passwordError" x-cloak class="error-message" style="margin-bottom: var(--space-4);">
+                <span x-text="passwordError"></span>
+              </div>
+              
+              <div x-show="error" x-cloak class="error-message" style="margin-bottom: var(--space-4);">
+                <span x-text="error"></span>
+              </div>
+              
+              <button 
+                type="submit" 
+                class="btn btn--primary"
+                style="width: 100%;"
+                :disabled="loading || passwordError"
+              >
+                <span x-show="!loading">Create Account</span>
+                <span x-show="loading">Creating account...</span>
+              </button>
+            </form>
+            
+            <p class="text-center" style="margin-top: var(--space-6); color: var(--text-muted);">
+              Already have an account? <a href="/login.html">Sign in</a>
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+  
+  <footer class="footer">
+    <div class="footer__inner">
+      <p>&copy; 2026 Direct Marketing Mastery School. All rights reserved.</p>
+    </div>
+  </footer>
+  
+  <style>
+    [x-cloak] { display: none !important; }
+  </style>
+</body>
+</html>

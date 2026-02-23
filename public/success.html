@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Payment Successful - Direct Marketing Mastery School</title>
+  
+  <link rel="stylesheet" href="/css/main.css">
+  <script src="https://unpkg.com/@phosphor-icons/web"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+  <script src="/js/theme.js"></script>
+  
+  <style>
+    .success-page {
+      min-height: calc(100vh - 72px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+    }
+    
+    .success-card {
+      background: var(--bg-primary);
+      border-radius: var(--radius-xl);
+      padding: 3rem;
+      max-width: 600px;
+      width: 100%;
+      text-align: center;
+      box-shadow: var(--shadow-light);
+    }
+    
+    .success-icon {
+      width: 100px;
+      height: 100px;
+      margin: 0 auto 2rem;
+      background: var(--accent-success);
+      border-radius: var(--radius-full);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 3rem;
+      color: white;
+      animation: success-pop 0.5s ease;
+    }
+    
+    @keyframes success-pop {
+      0% { transform: scale(0); }
+      50% { transform: scale(1.1); }
+      100% { transform: scale(1); }
+    }
+    
+    .success-title {
+      font-size: var(--text-2xl);
+      margin-bottom: 1rem;
+    }
+    
+    .success-message {
+      color: var(--text-secondary);
+      margin-bottom: 2rem;
+      line-height: 1.6;
+    }
+    
+    .success-details {
+      background: var(--bg-secondary);
+      border-radius: var(--radius-md);
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+      text-align: left;
+    }
+    
+    .success-details__row {
+      display: flex;
+      justify-content: space-between;
+      padding: 0.75rem 0;
+      border-bottom: 1px solid rgba(0,0,0,0.1);
+    }
+    
+    .success-details__row:last-child {
+      border-bottom: none;
+    }
+    
+    .success-details__label {
+      color: var(--text-muted);
+    }
+    
+    .success-details__value {
+      font-weight: 600;
+    }
+    
+    .next-steps {
+      display: grid;
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+    
+    .next-step {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 1.25rem;
+      background: var(--bg-secondary);
+      border-radius: var(--radius-md);
+      text-decoration: none;
+      color: inherit;
+      transition: transform 0.2s ease;
+    }
+    
+    .next-step:hover {
+      transform: translateX(4px);
+      text-decoration: none;
+    }
+    
+    .next-step__icon {
+      width: 50px;
+      height: 50px;
+      background: var(--accent-primary);
+      border-radius: var(--radius-full);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 1.5rem;
+      flex-shrink: 0;
+    }
+    
+    .next-step__content {
+      text-align: left;
+      flex: 1;
+    }
+    
+    .next-step__title {
+      font-weight: 600;
+      margin-bottom: 0.25rem;
+    }
+    
+    .next-step__description {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+    }
+    
+    .loading-spinner {
+      width: 60px;
+      height: 60px;
+      margin: 0 auto 2rem;
+      border: 4px solid var(--bg-secondary);
+      border-top-color: var(--accent-primary);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+    
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body x-data="successPage()" x-init="verifyPayment()">
+  <main class="success-page">
+    <!-- Loading State -->
+    <div x-show="loading" class="success-card">
+      <div class="loading-spinner"></div>
+      <h2 class="success-title">Confirming your purchase...</h2>
+      <p class="success-message">Please wait while we verify your payment.</p>
+    </div>
+    
+    <!-- Success State -->
+    <div x-show="!loading && verified" class="success-card">
+      <div class="success-icon">
+        <i class="ph ph-check"></i>
+      </div>
+      
+      <h1 class="success-title">Welcome to the Course!</h1>
+      <p class="success-message">
+        Your purchase was successful. You now have lifetime access to all course materials. 
+        Check your email for your receipt.
+      </p>
+      
+      <div class="success-details">
+        <div class="success-details__row">
+          <span class="success-details__label">Course</span>
+          <span class="success-details__value" x-text="courseName || 'Course'"></span>
+        </div>
+        <div class="success-details__row">
+          <span class="success-details__label">Amount Paid</span>
+          <span class="success-details__value" x-text="amount || '$399.00'"></span>
+        </div>
+        <div class="success-details__row">
+          <span class="success-details__label">Access</span>
+          <span class="success-details__value" style="color: var(--accent-success);">Lifetime</span>
+        </div>
+      </div>
+      
+      <div class="next-steps">
+        <a href="/dashboard/" class="next-step">
+          <div class="next-step__icon">
+            <i class="ph ph-play-circle"></i>
+          </div>
+          <div class="next-step__content">
+            <div class="next-step__title">Start Learning Now</div>
+            <div class="next-step__description">Go to your dashboard and begin the first lesson</div>
+          </div>
+          <i class="ph ph-caret-right" style="color: var(--text-muted);"></i>
+        </a>
+        
+        <a href="/courses/" class="next-step">
+          <div class="next-step__icon" style="background: var(--accent-secondary); color: #1a202c;">
+            <i class="ph ph-books"></i>
+          </div>
+          <div class="next-step__content">
+            <div class="next-step__title">Explore More Courses</div>
+            <div class="next-step__description">Continue your journey with additional courses</div>
+          </div>
+          <i class="ph ph-caret-right" style="color: var(--text-muted);"></i>
+        </a>
+      </div>
+      
+      <a href="/dashboard/" class="btn btn--primary" style="width: 100%; padding: 1rem;">
+        Go to My Dashboard
+        <i class="ph ph-arrow-right"></i>
+      </a>
+    </div>
+    
+    <!-- Error State -->
+    <div x-show="!loading && !verified" class="success-card">
+      <div class="success-icon" style="background: var(--accent-error);">
+        <i class="ph ph-x"></i>
+      </div>
+      
+      <h2 class="success-title">Something Went Wrong</h2>
+      <p class="success-message">
+        We couldn't verify your payment. Please check your email for confirmation 
+        or contact support if you need assistance.
+      </p>
+      
+      <a href="/courses/" class="btn btn--primary" style="margin-top: 1rem;">
+        <i class="ph ph-arrow-left"></i>
+        Back to Courses
+      </a>
+    </div>
+  </main>
+  
+  <script>
+    const API_BASE_URL = window.location.origin.includes('localhost') 
+      ? 'http://localhost:8788' 
+      : 'https://fotf-platform-staging.destinhounkpef.workers.dev';
+    
+    function successPage() {
+      return {
+        loading: true,
+        verified: false,
+        courseName: '',
+        amount: '',
+        
+        async verifyPayment() {
+          const params = new URLSearchParams(window.location.search);
+          const sessionId = params.get('session_id');
+          
+          if (!sessionId) {
+            this.loading = false;
+            return;
+          }
+          
+          // Give webhook time to process
+          await new Promise(resolve => setTimeout(resolve, 2000));
+          
+          try {
+            const response = await fetch(`${API_BASE_URL}/api/payments/session/${sessionId}`, {
+              headers: {
+                'Authorization': `Bearer ${localStorage.getItem('token') || ''}`
+              }
+            });
+            
+            if (response.ok) {
+              const data = await response.json();
+              if (data.payment_status === 'paid') {
+                this.verified = true;
+                this.courseName = data.course_title || 'Course';
+                this.amount = '$' + ((data.amount_total || 39900) / 100).toFixed(2);
+              }
+            }
+          } catch (error) {
+            console.error('Verification error:', error);
+          } finally {
+            this.loading = false;
+          }
+        }
+      };
+    }
+  </script>
+</body>
+</html>

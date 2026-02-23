@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lesson - Direct Marketing Mastery School</title>
+  
+  <link rel="stylesheet" href="/css/main.css">
+  <script src="https://unpkg.com/@phosphor-icons/web"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+  <script src="/js/utm.js"></script>
+  <script src="/js/theme.js"></script>
+  <script src="/js/auth.js"></script>
+  
+  <style>
+    .lesson-layout {
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      min-height: calc(100vh - 72px);
+    }
+    
+    .lesson-sidebar {
+      background: var(--bg-secondary);
+      padding: 1.5rem;
+      overflow-y: auto;
+      border-right: 1px solid rgba(0,0,0,0.1);
+    }
+    
+    .lesson-sidebar__course {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding-bottom: 1rem;
+      margin-bottom: 1rem;
+      border-bottom: 1px solid rgba(0,0,0,0.1);
+    }
+    
+    .lesson-sidebar__course img {
+      width: 50px;
+      height: 50px;
+      border-radius: var(--radius-md);
+      object-fit: cover;
+    }
+    
+    .lesson-sidebar__list {
+      list-style: none;
+    }
+    
+    .lesson-sidebar__item {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.75rem;
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      transition: all 0.2s ease;
+      margin-bottom: 0.25rem;
+    }
+    
+    .lesson-sidebar__item:hover {
+      background: var(--bg-primary);
+    }
+    
+    .lesson-sidebar__item--active {
+      background: var(--accent-primary);
+      color: white;
+    }
+    
+    .lesson-sidebar__item--completed {
+      color: var(--accent-success);
+    }
+    
+    .lesson-sidebar__number {
+      width: 28px;
+      height: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--bg-primary);
+      border-radius: var(--radius-full);
+      font-size: 0.8rem;
+      font-weight: 600;
+      flex-shrink: 0;
+    }
+    
+    .lesson-sidebar__item--active .lesson-sidebar__number {
+      background: rgba(255,255,255,0.2);
+    }
+    
+    .lesson-content {
+      padding: 2rem;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    
+    .lesson-video {
+      width: 100%;
+      aspect-ratio: 16/9;
+      background: #000;
+      border-radius: var(--radius-lg);
+      margin-bottom: 2rem;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .lesson-video iframe,
+    .lesson-video video {
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+    
+    .lesson-video__placeholder {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+      color: white;
+    }
+    
+    .lesson-video__placeholder i {
+      font-size: 4rem;
+      margin-bottom: 1rem;
+      opacity: 0.5;
+    }
+    
+    .lesson-header {
+      margin-bottom: 2rem;
+    }
+    
+    .lesson-header__title {
+      font-size: var(--text-2xl);
+      margin-bottom: 0.5rem;
+    }
+    
+    .lesson-header__meta {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      color: var(--text-muted);
+      font-size: 0.9rem;
+    }
+    
+    .lesson-body {
+      line-height: 1.8;
+      color: var(--text-secondary);
+    }
+    
+    .lesson-body h2 {
+      color: var(--text-primary);
+      margin-top: 2rem;
+      margin-bottom: 1rem;
+    }
+    
+    .lesson-body p {
+      margin-bottom: 1rem;
+    }
+    
+    .lesson-body ul, .lesson-body ol {
+      margin-bottom: 1rem;
+      padding-left: 1.5rem;
+    }
+    
+    .lesson-body li {
+      margin-bottom: 0.5rem;
+    }
+    
+    .lesson-actions {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 2rem 0;
+      margin-top: 3rem;
+      border-top: 1px solid rgba(0,0,0,0.1);
+    }
+    
+    .lesson-actions__prev,
+    .lesson-actions__next {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    
+    .complete-button {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 1rem 2rem;
+      background: var(--accent-success);
+      color: white;
+      border: none;
+      border-radius: var(--radius-md);
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: var(--shadow-light);
+    }
+    
+    .complete-button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 20px rgba(72, 187, 120, 0.3);
+    }
+    
+    .complete-button--completed {
+      background: var(--bg-primary);
+      color: var(--accent-success);
+      box-shadow: var(--shadow-inset);
+    }
+    
+    .progress-indicator {
+      position: fixed;
+      top: 72px;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: var(--bg-secondary);
+      z-index: 100;
+    }
+    
+    .progress-indicator__fill {
+      height: 100%;
+      background: var(--accent-primary);
+      transition: width 0.3s ease;
+    }
+    
+    @media (max-width: 768px) {
+      .lesson-layout {
+        grid-template-columns: 1fr;
+      }
+      
+      .lesson-sidebar {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body x-data="lessonPlayer()" x-init="init()">
+  <a href="#main-content" class="skip-link">Skip to main content</a>
+  
+  <!-- Progress Bar -->
+  <div class="progress-indicator">
+    <div class="progress-indicator__fill" :style="'width: ' + courseProgress + '%'"></div>
+  </div>
+  
+  <header class="header">
+    <div class="header__inner">
+      <a href="/" class="header__logo">
+        <i class="ph ph-graduation-cap" style="font-size: 1.5rem;"></i>
+        F.O.T.F. School
+      </a>
+      <nav class="header__nav">
+        <a href="/courses/">Courses</a>
+        <a href="/dashboard/">Dashboard</a>
+        <a href="#" @click.prevent="$store.auth.logout(); window.location.href='/'">
+          <i class="ph ph-sign-out"></i>
+        </a>
+        <button class="theme-toggle" @click="$store.theme.toggle()">
+          <i class="ph" :class="$store.theme.mode === 'dark' ? 'ph-sun' : 'ph-moon'"></i>
+        </button>
+      </nav>
+    </div>
+  </header>
+  
+  <main id="main-content" class="lesson-layout">
+    <!-- Sidebar -->
+    <aside class="lesson-sidebar">
+      <div class="lesson-sidebar__course">
+        <img :src="course?.cover_image_url || 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=100&h=100&fit=crop'" alt="">
+        <div>
+          <div style="font-weight: 600;" x-text="course?.title || 'Course'"></div>
+          <div style="font-size: 0.8rem; color: var(--text-muted);" x-text="courseProgress + '% complete'"></div>
+        </div>
+      </div>
+      
+      <ul class="lesson-sidebar__list">
+        <template x-for="(l, index) in allLessons" :key="l.id">
+          <li 
+            class="lesson-sidebar__item"
+            :class="{ 
+              'lesson-sidebar__item--active': l.id === lesson?.id,
+              'lesson-sidebar__item--completed': l.completed
+            }"
+            @click="navigateToLesson(l.slug)"
+          >
+            <span class="lesson-sidebar__number" x-text="index + 1"></span>
+            <span style="flex: 1; font-size: 0.9rem;" x-text="l.title"></span>
+            <i x-show="l.completed" class="ph ph-check-circle" style="color: var(--accent-success);"></i>
+          </li>
+        </template>
+      </ul>
+    </aside>
+    
+    <!-- Main Content -->
+    <article class="lesson-content">
+      <!-- Loading -->
+      <div x-show="loading">
+        <div class="skeleton" style="aspect-ratio: 16/9; border-radius: var(--radius-lg); margin-bottom: 2rem;"></div>
+        <div class="skeleton" style="height: 40px; width: 60%; margin-bottom: 1rem;"></div>
+        <div class="skeleton" style="height: 20px; width: 40%; margin-bottom: 2rem;"></div>
+        <div class="skeleton" style="height: 100px;"></div>
+      </div>
+      
+      <!-- Lesson Content -->
+      <template x-if="!loading && lesson">
+        <div>
+          <!-- Video Player -->
+          <div class="lesson-video">
+            <template x-if="lesson.video_url">
+              <iframe 
+                :src="lesson.video_url" 
+                frameborder="0" 
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                allowfullscreen
+              ></iframe>
+            </template>
+            <template x-if="!lesson.video_url">
+              <div class="lesson-video__placeholder">
+                <i class="ph ph-video-camera"></i>
+                <p>Video content coming soon</p>
+              </div>
+            </template>
+          </div>
+          
+          <!-- Header -->
+          <header class="lesson-header">
+            <h1 class="lesson-header__title" x-text="lesson.title"></h1>
+            <div class="lesson-header__meta">
+              <span>
+                <i class="ph ph-books"></i>
+                <span x-text="course?.title"></span>
+              </span>
+              <span>
+                <i class="ph ph-list-numbers"></i>
+                Lesson <span x-text="currentLessonNumber"></span> of <span x-text="allLessons.length"></span>
+              </span>
+            </div>
+          </header>
+          
+          <!-- Content -->
+          <div class="lesson-body" x-html="lesson.content_html || '<p>No content available for this lesson.</p>'"></div>
+          
+          <!-- Actions -->
+          <div class="lesson-actions">
+            <button 
+              x-show="navigation.previous" 
+              @click="navigateToLesson(navigation.previous.slug)"
+              class="lesson-actions__prev btn btn--ghost"
+            >
+              <i class="ph ph-arrow-left"></i>
+              <div>
+                <div style="font-size: 0.8rem; color: var(--text-muted);">Previous</div>
+                <div x-text="navigation.previous.title"></div>
+              </div>
+            </button>
+            
+            <button 
+              @click="markComplete()"
+              class="complete-button"
+              :class="{ 'complete-button--completed': lesson.is_completed }"
+              :disabled="completing"
+            >
+              <i class="ph" :class="lesson.is_completed ? 'ph-check-circle' : 'ph-circle'"></i>
+              <span x-text="lesson.is_completed ? 'Completed' : 'Mark Complete'"></span>
+            </button>
+            
+            <button 
+              x-show="navigation.next" 
+              @click="navigateToLesson(navigation.next.slug)"
+              class="lesson-actions__next btn btn--primary"
+            >
+              <div style="text-align: right;">
+                <div style="font-size: 0.8rem; opacity: 0.8;">Next</div>
+                <div x-text="navigation.next.title"></div>
+              </div>
+              <i class="ph ph-arrow-right"></i>
+            </button>
+          </div>
+        </div>
+      </template>
+    </article>
+  </main>
+  
+  <script>
+    const API_BASE_URL = window.location.origin.includes('localhost') 
+      ? 'http://localhost:8788' 
+      : 'https://fotf-platform-staging.destinhounkpef.workers.dev';
+    
+    function lessonPlayer() {
+      return {
+        course: null,
+        lesson: null,
+        allLessons: [],
+        navigation: { previous: null, next: null },
+        courseProgress: 0,
+        currentLessonNumber: 0,
+        loading: true,
+        completing: false,
+        
+        async init() {
+          const params = new URLSearchParams(window.location.search);
+          const courseSlug = params.get('course');
+          const lessonSlug = params.get('lesson');
+          
+          if (!courseSlug || !lessonSlug) {
+            window.location.href = '/courses/';
+            return;
+          }
+          
+          const token = localStorage.getItem('token');
+          if (!token) {
+            window.location.href = '/login.html?redirect=' + encodeURIComponent(window.location.href);
+            return;
+          }
+          
+          try {
+            // Load lesson
+            const response = await fetch(
+              `${API_BASE_URL}/api/courses/${courseSlug}/lessons/${lessonSlug}`,
+              { headers: { 'Authorization': `Bearer ${token}` } }
+            );
+            
+            if (!response.ok) {
+              if (response.status === 403) {
+                alert('Purchase required to access this lesson');
+                window.location.href = `/courses/${courseSlug}`;
+                return;
+              }
+              throw new Error('Failed to load lesson');
+            }
+            
+            const data = await response.json();
+            this.lesson = data.lesson;
+            this.course = data.course;
+            this.navigation = data.navigation;
+            this.courseProgress = data.course_progress;
+            this.currentLessonNumber = data.navigation.current_index;
+            
+            // Load all lessons for sidebar
+            const courseResponse = await fetch(
+              `${API_BASE_URL}/api/courses/${courseSlug}`,
+              { headers: { 'Authorization': `Bearer ${token}` } }
+            );
+            
+            if (courseResponse.ok) {
+              const courseData = await courseResponse.json();
+              this.allLessons = courseData.lessons;
+            }
+            
+          } catch (error) {
+            console.error('Failed to load lesson:', error);
+          } finally {
+            this.loading = false;
+          }
+        },
+        
+        navigateToLesson(slug) {
+          const params = new URLSearchParams(window.location.search);
+          const courseSlug = params.get('course');
+          window.location.href = `/dashboard/lesson.html?course=${courseSlug}&lesson=${slug}`;
+        },
+        
+        async markComplete() {
+          if (this.lesson.is_completed || this.completing) return;
+          
+          this.completing = true;
+          
+          try {
+            const params = new URLSearchParams(window.location.search);
+            const courseSlug = params.get('course');
+            const lessonSlug = params.get('lesson');
+            
+            const response = await fetch(
+              `${API_BASE_URL}/api/courses/${courseSlug}/lessons/${lessonSlug}/complete`,
+              {
+                method: 'POST',
+                headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+              }
+            );
+            
+            if (response.ok) {
+              this.lesson.is_completed = true;
+              
+              // Update in sidebar list
+              const lessonInList = this.allLessons.find(l => l.id === this.lesson.id);
+              if (lessonInList) lessonInList.completed = true;
+              
+              // Check for milestones
+              await fetch(`${API_BASE_URL}/api/dashboard/check-milestone`, {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                  'Authorization': `Bearer ${localStorage.getItem('token')}`
+                },
+                body: JSON.stringify({ course_id: this.course.id })
+              });
+            }
+          } catch (error) {
+            console.error('Failed to mark complete:', error);
+          } finally {
+            this.completing = false;
+          }
+        }
+      };
+    }
+  </script>
+</body>
+</html>

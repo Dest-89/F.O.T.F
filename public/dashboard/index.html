@@ -1,0 +1,721 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard - Direct Marketing Mastery School</title>
+  
+  <link rel="stylesheet" href="/css/main.css">
+  <script src="https://unpkg.com/@phosphor-icons/web"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+  <script src="/js/utm.js"></script>
+  <script src="/js/theme.js"></script>
+  <script src="/js/auth.js"></script>
+  
+  <style>
+    .dashboard-layout {
+      display: grid;
+      grid-template-columns: 260px 1fr;
+      min-height: calc(100vh - 72px);
+    }
+    
+    .dashboard-sidebar {
+      background: var(--bg-secondary);
+      padding: 1.5rem;
+      border-right: 1px solid rgba(0,0,0,0.1);
+    }
+    
+    .dashboard-sidebar__user {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding-bottom: 1.5rem;
+      margin-bottom: 1.5rem;
+      border-bottom: 1px solid rgba(0,0,0,0.1);
+    }
+    
+    .dashboard-sidebar__avatar {
+      width: 50px;
+      height: 50px;
+      border-radius: var(--radius-full);
+      background: var(--accent-primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 1.5rem;
+      font-weight: 600;
+    }
+    
+    .dashboard-sidebar__streak {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.75rem;
+      background: var(--bg-primary);
+      border-radius: var(--radius-md);
+      margin-bottom: 1.5rem;
+      box-shadow: var(--shadow-light);
+    }
+    
+    .dashboard-sidebar__streak i {
+      color: var(--accent-secondary);
+      font-size: 1.25rem;
+    }
+    
+    .dashboard-sidebar__menu {
+      list-style: none;
+    }
+    
+    .dashboard-sidebar__menu-item {
+      margin-bottom: 0.25rem;
+    }
+    
+    .dashboard-sidebar__menu-link {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.75rem 1rem;
+      border-radius: var(--radius-md);
+      color: var(--text-secondary);
+      text-decoration: none;
+      transition: all 0.2s ease;
+    }
+    
+    .dashboard-sidebar__menu-link:hover,
+    .dashboard-sidebar__menu-link--active {
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      box-shadow: var(--shadow-light);
+    }
+    
+    .dashboard-content {
+      padding: 2rem;
+      background: var(--bg-primary);
+    }
+    
+    .welcome-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.5rem 2rem;
+      background: var(--bg-secondary);
+      border-radius: var(--radius-lg);
+      margin-bottom: 2rem;
+      box-shadow: var(--shadow-light);
+    }
+    
+    .welcome-bar__title {
+      font-size: 1.5rem;
+      margin-bottom: 0.25rem;
+    }
+    
+    .welcome-bar__subtitle {
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+    }
+    
+    .journey-map {
+      background: var(--bg-secondary);
+      border-radius: var(--radius-lg);
+      padding: 2rem;
+      margin-bottom: 2rem;
+      box-shadow: var(--shadow-light);
+    }
+    
+    .journey-map__title {
+      font-size: 1.25rem;
+      margin-bottom: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    
+    .journey-path {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: relative;
+    }
+    
+    .journey-path::before {
+      content: '';
+      position: absolute;
+      top: 24px;
+      left: 40px;
+      right: 40px;
+      height: 4px;
+      background: var(--bg-primary);
+      z-index: 0;
+    }
+    
+    .journey-path__progress {
+      position: absolute;
+      top: 24px;
+      left: 40px;
+      height: 4px;
+      background: var(--accent-primary);
+      z-index: 1;
+      transition: width 0.5s ease;
+    }
+    
+    .journey-step {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+      position: relative;
+      z-index: 2;
+    }
+    
+    .journey-step__icon {
+      width: 50px;
+      height: 50px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--bg-primary);
+      border-radius: var(--radius-full);
+      box-shadow: var(--shadow-light);
+      font-size: 1.5rem;
+      color: var(--text-muted);
+      transition: all 0.3s ease;
+    }
+    
+    .journey-step--active .journey-step__icon,
+    .journey-step--completed .journey-step__icon {
+      background: var(--accent-primary);
+      color: white;
+    }
+    
+    .journey-step--completed .journey-step__icon {
+      background: var(--accent-success);
+    }
+    
+    .journey-step__label {
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: var(--text-muted);
+    }
+    
+    .journey-step--active .journey-step__label {
+      color: var(--accent-primary);
+    }
+    
+    .courses-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 1.5rem;
+    }
+    
+    .course-card {
+      background: var(--bg-secondary);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      box-shadow: var(--shadow-light);
+      transition: transform 0.3s ease;
+    }
+    
+    .course-card:hover {
+      transform: translateY(-4px);
+    }
+    
+    .course-card__image {
+      width: 100%;
+      height: 150px;
+      object-fit: cover;
+    }
+    
+    .course-card__content {
+      padding: 1.25rem;
+    }
+    
+    .course-card__title {
+      font-size: 1.1rem;
+      margin-bottom: 0.75rem;
+    }
+    
+    .course-card__progress {
+      margin-bottom: 1rem;
+    }
+    
+    .course-card__progress-bar {
+      width: 100%;
+      height: 6px;
+      background: var(--bg-primary);
+      border-radius: var(--radius-full);
+      overflow: hidden;
+    }
+    
+    .course-card__progress-fill {
+      height: 100%;
+      background: var(--accent-primary);
+      border-radius: var(--radius-full);
+      transition: width 0.5s ease;
+    }
+    
+    .course-card__progress-text {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-top: 0.5rem;
+    }
+    
+    .activity-feed {
+      background: var(--bg-secondary);
+      border-radius: var(--radius-lg);
+      padding: 1.5rem;
+      box-shadow: var(--shadow-light);
+    }
+    
+    .activity-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 1rem;
+      padding: 1rem 0;
+      border-bottom: 1px solid rgba(0,0,0,0.1);
+    }
+    
+    .activity-item:last-child {
+      border-bottom: none;
+    }
+    
+    .activity-item__icon {
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--bg-primary);
+      border-radius: var(--radius-full);
+      color: var(--accent-primary);
+      flex-shrink: 0;
+    }
+    
+    .activity-item__content {
+      flex: 1;
+    }
+    
+    .activity-item__text {
+      font-size: 0.9rem;
+      margin-bottom: 0.25rem;
+    }
+    
+    .activity-item__time {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+    
+    .blog-section {
+      background: var(--bg-secondary);
+      border-radius: var(--radius-lg);
+      padding: 1.5rem;
+      box-shadow: var(--shadow-light);
+    }
+    
+    .blog-card {
+      display: flex;
+      gap: 1rem;
+      padding: 1rem 0;
+      border-bottom: 1px solid rgba(0,0,0,0.1);
+      text-decoration: none;
+      color: inherit;
+    }
+    
+    .blog-card:last-child {
+      border-bottom: none;
+    }
+    
+    .blog-card__image {
+      width: 80px;
+      height: 60px;
+      object-fit: cover;
+      border-radius: var(--radius-md);
+      flex-shrink: 0;
+    }
+    
+    .blog-card__content {
+      flex: 1;
+    }
+    
+    .blog-card__title {
+      font-size: 0.95rem;
+      font-weight: 600;
+      margin-bottom: 0.25rem;
+    }
+    
+    .blog-card__excerpt {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    
+    @media (max-width: 768px) {
+      .dashboard-layout {
+        grid-template-columns: 1fr;
+      }
+      
+      .dashboard-sidebar {
+        display: none;
+      }
+      
+      .journey-path {
+        flex-wrap: wrap;
+        gap: 1rem;
+      }
+      
+      .journey-path::before,
+      .journey-path__progress {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body x-data="dashboard()" x-init="init()">
+  <a href="#main-content" class="skip-link">Skip to main content</a>
+  
+  <header class="header">
+    <div class="header__inner">
+      <a href="/" class="header__logo">
+        <i class="ph ph-graduation-cap" style="font-size: 1.5rem;"></i>
+        F.O.T.F. School
+      </a>
+      <nav class="header__nav">
+        <a href="/courses/">Courses</a>
+        <a href="/dashboard/" class="active">Dashboard</a>
+        <a href="/blog/">Blog</a>
+        <a href="#" @click.prevent="$store.auth.logout(); window.location.href='/'">
+          <i class="ph ph-sign-out"></i>
+        </a>
+        <button class="theme-toggle" @click="$store.theme.toggle()">
+          <i class="ph" :class="$store.theme.mode === 'dark' ? 'ph-sun' : 'ph-moon'"></i>
+        </button>
+      </nav>
+    </div>
+  </header>
+  
+  <main id="main-content" class="dashboard-layout">
+    <!-- Sidebar -->
+    <aside class="dashboard-sidebar">
+      <div class="dashboard-sidebar__user">
+        <div class="dashboard-sidebar__avatar" x-text="user?.name?.[0] || user?.email?.[0] || '?'"></div>
+        <div>
+          <div style="font-weight: 600;" x-text="user?.name || 'Student'"></div>
+          <div style="font-size: 0.8rem; color: var(--text-muted);" x-text="user?.email"></div>
+        </div>
+      </div>
+      
+      <div class="dashboard-sidebar__streak">
+        <i class="ph ph-fire"></i>
+        <div>
+          <div style="font-size: 0.75rem; color: var(--text-muted);">Login Streak</div>
+          <div style="font-weight: 600;" x-text="(user?.login_streak || 0) + ' days'"></div>
+        </div>
+      </div>
+      
+      <ul class="dashboard-sidebar__menu">
+        <li class="dashboard-sidebar__menu-item">
+          <a href="/dashboard/" class="dashboard-sidebar__menu-link dashboard-sidebar__menu-link--active">
+            <i class="ph ph-squares-four"></i>
+            Dashboard
+          </a>
+        </li>
+        <li class="dashboard-sidebar__menu-item">
+          <a href="/courses/" class="dashboard-sidebar__menu-link">
+            <i class="ph ph-books"></i>
+            Browse Courses
+          </a>
+        </li>
+        <li class="dashboard-sidebar__menu-item">
+          <a href="/services.html" class="dashboard-sidebar__menu-link">
+            <i class="ph ph-calendar-check"></i>
+            Book Consultation
+          </a>
+        </li>
+        <li class="dashboard-sidebar__menu-item">
+          <a href="/blog/" class="dashboard-sidebar__menu-link">
+            <i class="ph ph-article"></i>
+            Blog
+          </a>
+        </li>
+      </ul>
+    </aside>
+    
+    <!-- Main Content -->
+    <div class="dashboard-content">
+      <!-- Loading State -->
+      <div x-show="loading">
+        <div class="skeleton" style="height: 100px; border-radius: var(--radius-lg); margin-bottom: 2rem;"></div>
+        <div class="skeleton" style="height: 200px; border-radius: var(--radius-lg);"></div>
+      </div>
+      
+      <template x-if="!loading">
+        <div>
+          <!-- Welcome Bar -->
+          <div class="welcome-bar">
+            <div>
+              <h1 class="welcome-bar__title">
+                Welcome back, <span x-text="user?.name?.split(' ')[0] || 'Student'"></span>!
+              </h1>
+              <p class="welcome-bar__subtitle">
+                Last seen: <span x-text="formatDate(user?.last_login_at)"></span>
+              </p>
+            </div>
+            <a href="/services.html" class="btn btn--secondary">
+              <i class="ph ph-calendar-check"></i>
+              Work With Me
+            </a>
+          </div>
+          
+          <!-- Journey Map -->
+          <div class="journey-map">
+            <h2 class="journey-map__title">
+              <i class="ph ph-map-trifold"></i>
+              Your Journey
+            </h2>
+            <div class="journey-path">
+              <div class="journey-path__progress" :style="'width: ' + calculateJourneyProgress() + '%'"></div>
+              
+              <div class="journey-step" :class="{ 'journey-step--active': true }">
+                <div class="journey-step__icon">
+                  <i class="ph ph-magnifying-glass"></i>
+                </div>
+                <span class="journey-step__label">Research</span>
+              </div>
+              
+              <div class="journey-step">
+                <div class="journey-step__icon">
+                  <i class="ph ph-rocket"></i>
+                </div>
+                <span class="journey-step__label">Traffic</span>
+              </div>
+              
+              <div class="journey-step">
+                <div class="journey-step__icon">
+                  <i class="ph ph-funnel"></i>
+                </div>
+                <span class="journey-step__label">Funnels</span>
+              </div>
+              
+              <div class="journey-step">
+                <div class="journey-step__icon">
+                  <i class="ph ph-envelope"></i>
+                </div>
+                <span class="journey-step__label">Email</span>
+              </div>
+              
+              <div class="journey-step">
+                <div class="journey-step__icon">
+                  <i class="ph ph-trend-up"></i>
+                </div>
+                <span class="journey-step__label">Advanced</span>
+              </div>
+            </div>
+          </div>
+          
+          <!-- My Courses -->
+          <h2 style="margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.5rem;">
+            <i class="ph ph-books"></i>
+            My Courses
+          </h2>
+          
+          <div x-show="courses.length === 0" class="card" style="text-align: center; padding: 3rem;">
+            <i class="ph ph-books" style="font-size: 3rem; color: var(--text-muted); margin-bottom: 1rem;"></i>
+            <h3>No courses yet</h3>
+            <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">Start your learning journey today</p>
+            <a href="/courses/" class="btn btn--primary">Browse Courses</a>
+          </div>
+          
+          <div class="courses-grid" style="margin-bottom: 3rem;">
+            <template x-for="course in courses" :key="course.id">
+              <div class="course-card">
+                <img 
+                  :src="course.cover_image_url || 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=400&h=200&fit=crop'" 
+                  :alt="course.title"
+                  class="course-card__image"
+                >
+                <div class="course-card__content">
+                  <h3 class="course-card__title" x-text="course.title"></h3>
+                  
+                  <div class="course-card__progress">
+                    <div class="course-card__progress-bar">
+                      <div class="course-card__progress-fill" :style="'width: ' + course.progress + '%'"></div>
+                    </div>
+                    <div class="course-card__progress-text">
+                      <span x-text="course.progress + '% complete'"></span>
+                      <span x-show="course.is_completed" style="color: var(--accent-success); margin-left: 0.5rem;">
+                        <i class="ph ph-check-circle"></i> Completed!
+                      </span>
+                    </div>
+                  </div>
+                  
+                  <a :href="'/dashboard/lesson.html?course=' + course.slug + '&lesson=' + (course.next_lesson?.slug || '')" 
+                     class="btn btn--primary" style="width: 100%;">
+                    <i class="ph ph-play-circle"></i>
+                    <span x-text="course.progress > 0 ? 'Continue' : 'Start Learning'"></span>
+                  </a>
+                </div>
+              </div>
+            </template>
+          </div>
+          
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+            <!-- Recent Activity -->
+            <div class="activity-feed">
+              <h3 style="margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+                <i class="ph ph-clock-counter-clockwise"></i>
+                Recent Activity
+              </h3>
+              
+              <template x-for="activity in recentActivity.slice(0, 5)" :key="activity.id">
+                <div class="activity-item">
+                  <div class="activity-item__icon">
+                    <i class="ph" :class="getActivityIcon(activity.event_type)"></i>
+                  </div>
+                  <div class="activity-item__content">
+                    <div class="activity-item__text" x-text="formatActivity(activity)"></div>
+                    <div class="activity-item__time" x-text="timeAgo(activity.created_at)"></div>
+                  </div>
+                </div>
+              </template>
+              
+              <div x-show="recentActivity.length === 0" style="text-align: center; padding: 2rem; color: var(--text-muted);">
+                <i class="ph ph-clock" style="font-size: 2rem; margin-bottom: 0.5rem;"></i>
+                <p>No activity yet</p>
+              </div>
+            </div>
+            
+            <!-- Latest Blog Posts -->
+            <div class="blog-section">
+              <h3 style="margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+                <i class="ph ph-article"></i>
+                Latest From Blog
+              </h3>
+              
+              <template x-for="post in blogPosts" :key="post.id">
+                <a :href="'/blog/' + post.slug" class="blog-card">
+                  <img 
+                    :src="post.cover_image_url || 'https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=160&h=120&fit=crop'" 
+                    :alt="post.title"
+                    class="blog-card__image"
+                  >
+                  <div class="blog-card__content">
+                    <div class="blog-card__title" x-text="post.title"></div>
+                    <div class="blog-card__excerpt" x-text="post.excerpt || 'Read more about this topic...'"></div>
+                  </div>
+                </a>
+              </template>
+            </div>
+          </div>
+        </div>
+      </template>
+    </div>
+  </main>
+  
+  <script>
+    const API_BASE_URL = window.location.origin.includes('localhost') 
+      ? 'http://localhost:8788' 
+      : 'https://fotf-platform-staging.destinhounkpef.workers.dev';
+    
+    function dashboard() {
+      return {
+        user: null,
+        courses: [],
+        recentActivity: [],
+        blogPosts: [],
+        loading: true,
+        
+        async init() {
+          const token = localStorage.getItem('token');
+          if (!token) {
+            window.location.href = '/login.html?redirect=' + encodeURIComponent('/dashboard/');
+            return;
+          }
+          
+          try {
+            const response = await fetch(`${API_BASE_URL}/api/dashboard`, {
+              headers: { 'Authorization': `Bearer ${token}` }
+            });
+            
+            if (response.ok) {
+              const data = await response.json();
+              this.user = data.user;
+              this.courses = data.courses;
+              this.recentActivity = data.recent_activity;
+              this.blogPosts = data.blog_posts;
+            } else if (response.status === 401) {
+              localStorage.removeItem('token');
+              window.location.href = '/login.html';
+            }
+          } catch (error) {
+            console.error('Failed to load dashboard:', error);
+          } finally {
+            this.loading = false;
+          }
+        },
+        
+        calculateJourneyProgress() {
+          if (this.courses.length === 0) return 0;
+          const completed = this.courses.filter(c => c.is_completed).length;
+          return Math.round((completed / 5) * 100); // 5 stages total
+        },
+        
+        formatDate(dateString) {
+          if (!dateString) return 'Never';
+          return new Date(dateString).toLocaleDateString('en-US', {
+            month: 'short',
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+          });
+        },
+        
+        getActivityIcon(eventType) {
+          const icons = {
+            'lesson_completed': 'ph-check-circle',
+            'course_purchased': 'ph-shopping-cart',
+            'user_registered': 'ph-user-plus',
+            'consultation_booked': 'ph-calendar-check'
+          };
+          return icons[eventType] || 'ph-info';
+        },
+        
+        formatActivity(activity) {
+          const messages = {
+            'lesson_completed': 'Completed a lesson',
+            'course_purchased': 'Purchased a course',
+            'user_registered': 'Joined the platform',
+            'consultation_booked': 'Booked a consultation'
+          };
+          return messages[activity.event_type] || 'Activity recorded';
+        },
+        
+        timeAgo(dateString) {
+          const date = new Date(dateString);
+          const now = new Date();
+          const seconds = Math.floor((now - date) / 1000);
+          
+          const intervals = {
+            year: 31536000,
+            month: 2592000,
+            week: 604800,
+            day: 86400,
+            hour: 3600,
+            minute: 60
+          };
+          
+          for (const [unit, secondsInUnit] of Object.entries(intervals)) {
+            const interval = Math.floor(seconds / secondsInUnit);
+            if (interval >= 1) {
+              return `${interval} ${unit}${interval > 1 ? 's' : ''} ago`;
+            }
+          }
+          return 'Just now';
+        }
+      };
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,756 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Design Directions — Direct Marketing Mastery School</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #e0e5ec;
+  --text: #31344b;
+  --text-2: #444b6e;
+  --blue: #4b6cb7;
+  --gold: #f0a030;
+  --success: #4caf7d;
+  --sh-light: #ffffff;
+  --sh-dark: #a3b1c6;
+  --radius: 20px;
+  --shadow-raised: 8px 8px 16px var(--sh-dark), -8px -8px 16px var(--sh-light);
+  --shadow-inset: inset 6px 6px 12px var(--sh-dark), inset -6px -6px 12px var(--sh-light);
+}
+
+[data-theme="dark"] {
+  --bg: #1a1f2e;
+  --text: #e8ecf4;
+  --text-2: #9aa3c2;
+  --blue: #6b8cd4;
+  --gold: #f5b44a;
+  --success: #3da86a;
+  --sh-light: #252b3d;
+  --sh-dark: #0e1218;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  padding: 48px 24px 80px;
+  transition: background 0.3s ease, color 0.3s ease;
+}
+
+/* === Dark Mode Toggle === */
+.mode-toggle {
+  position: fixed;
+  top: 24px;
+  right: 24px;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--bg);
+  box-shadow: var(--shadow-raised);
+  border-radius: 50px;
+  padding: 8px 16px;
+  border: none;
+  cursor: pointer;
+  font-family: 'Inter', sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-2);
+  transition: all 0.3s ease;
+}
+
+.mode-toggle:hover { color: var(--text); }
+
+.toggle-track {
+  width: 32px; height: 18px;
+  background: var(--bg);
+  box-shadow: var(--shadow-inset);
+  border-radius: 9px;
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+.toggle-thumb {
+  width: 12px; height: 12px;
+  border-radius: 50%;
+  background: var(--text-2);
+  position: absolute;
+  top: 3px; left: 3px;
+  transition: all 0.3s ease;
+}
+
+[data-theme="dark"] .toggle-thumb {
+  left: 17px;
+  background: var(--gold);
+}
+
+/* === Header === */
+.page-header {
+  max-width: 900px;
+  margin: 0 auto 56px;
+  text-align: center;
+}
+
+.badge {
+  display: inline-block;
+  background: var(--bg);
+  box-shadow: var(--shadow-raised);
+  border-radius: 50px;
+  padding: 6px 18px;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-2);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-bottom: 20px;
+}
+
+.page-header h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(26px, 4vw, 44px);
+  font-weight: 700;
+  line-height: 1.2;
+  margin-bottom: 16px;
+}
+
+.page-header p {
+  color: var(--text-2);
+  font-size: 15px;
+  line-height: 1.7;
+  max-width: 580px;
+  margin: 0 auto;
+}
+
+/* === Grid === */
+.directions-grid {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 32px;
+}
+
+/* === Card === */
+.direction-card {
+  background: var(--bg);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-raised);
+  overflow: hidden;
+}
+
+.color-bar { height: 5px; }
+
+.direction-header {
+  padding: 20px 22px 14px;
+  border-bottom: 1px solid rgba(163,177,198,0.3);
+}
+
+.direction-header-top {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 6px;
+}
+
+.direction-num {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px; height: 26px;
+  background: var(--bg);
+  box-shadow: var(--shadow-raised);
+  border-radius: 50%;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--blue);
+  flex-shrink: 0;
+}
+
+.direction-name {
+  font-family: 'Playfair Display', serif;
+  font-size: 19px;
+  font-weight: 700;
+}
+
+.direction-tagline {
+  font-size: 12px;
+  color: var(--text-2);
+  line-height: 1.4;
+  font-style: italic;
+}
+
+/* === Mockup === */
+.mockup {
+  padding: 14px;
+}
+
+.mockup-inner {
+  border-radius: 14px;
+  box-shadow: var(--shadow-inset);
+  padding: 14px;
+  min-height: 195px;
+  background: var(--bg);
+}
+
+/* === Traits === */
+.direction-traits {
+  padding: 14px 22px 20px;
+}
+
+.trait {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: 12px;
+  color: var(--text-2);
+  line-height: 1.5;
+  margin-bottom: 7px;
+}
+
+.trait:last-child { margin-bottom: 0; }
+
+.dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  margin-top: 5px;
+  flex-shrink: 0;
+}
+
+/* ======================== */
+/* DIRECTION 1 — THE JOURNEY */
+/* ======================== */
+.d1 { display: flex; flex-direction: column; gap: 10px; }
+.d1-greeting {
+  font-family: 'Playfair Display', serif;
+  font-size: 13px; font-weight: 600; color: var(--text);
+}
+.d1-path {
+  display: flex; align-items: flex-start; gap: 4px;
+}
+.d1-node { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+.d1-dot {
+  width: 30px; height: 30px; border-radius: 50%;
+  background: var(--bg); box-shadow: var(--shadow-raised);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 10px; font-weight: 700; color: var(--text-2);
+}
+.d1-dot.done { background: var(--success); color: white; box-shadow: 4px 4px 8px #a3b1c6, -4px -4px 8px #fff; }
+.d1-dot.active { background: var(--blue); color: white; box-shadow: 4px 4px 8px #a3b1c6, -4px -4px 8px #fff; }
+.d1-label { font-size: 9px; color: var(--text-2); text-align: center; max-width: 38px; line-height: 1.2; }
+.d1-line {
+  height: 2px; flex: 1;
+  margin-top: 14px;
+  border-radius: 1px;
+}
+.d1-card {
+  background: var(--bg); box-shadow: var(--shadow-raised);
+  border-radius: 12px; padding: 10px 12px;
+  display: flex; align-items: center; gap: 10px;
+}
+.d1-icon { width: 30px; height: 30px; border-radius: 10px; background: var(--blue); flex-shrink: 0; opacity: 0.85; }
+.d1-meta { flex: 1; }
+.d1-lesson-title { font-size: 11px; font-weight: 600; color: var(--text); margin-bottom: 4px; }
+.d1-bar { height: 4px; background: var(--bg); box-shadow: var(--shadow-inset); border-radius: 2px; overflow: hidden; }
+.d1-fill { height: 100%; width: 45%; background: var(--blue); border-radius: 2px; }
+.d1-btn {
+  background: var(--blue); color: white; border: none;
+  border-radius: 8px; padding: 5px 11px; font-size: 10px; font-weight: 600; cursor: pointer; flex-shrink: 0;
+}
+
+/* ========================== */
+/* DIRECTION 2 — THE LAUNCHPAD */
+/* ========================== */
+.d2 { display: flex; flex-direction: column; gap: 9px; }
+.d2-hero {
+  background: var(--blue); border-radius: 12px; padding: 13px; color: white;
+}
+.d2-hero-label { font-size: 9px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; opacity: 0.65; margin-bottom: 3px; }
+.d2-hero-title { font-family: 'Playfair Display', serif; font-size: 14px; font-weight: 700; margin-bottom: 10px; }
+.d2-launch { background: var(--gold); color: white; border: none; border-radius: 8px; padding: 6px 14px; font-size: 10px; font-weight: 700; cursor: pointer; }
+.d2-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 7px; }
+.d2-stat {
+  background: var(--bg); box-shadow: var(--shadow-raised);
+  border-radius: 10px; padding: 7px; text-align: center;
+}
+.d2-stat-val { font-size: 17px; font-weight: 700; color: var(--gold); }
+.d2-stat-label { font-size: 9px; color: var(--text-2); margin-top: 1px; }
+.d2-loop {
+  background: var(--bg); box-shadow: var(--shadow-raised);
+  border-radius: 10px; padding: 9px 12px;
+}
+.d2-loop-label { font-size: 9px; font-weight: 700; color: var(--text-2); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 5px; }
+.d2-loop-steps { display: flex; align-items: center; gap: 5px; font-size: 9px; font-weight: 600; }
+.d2-step.done { color: var(--success); text-decoration: line-through; opacity: 0.6; }
+.d2-step.active { color: var(--gold); }
+.d2-arrow { color: var(--gold); }
+
+/* ======================== */
+/* DIRECTION 3 — THE ACADEMY */
+/* ======================== */
+.d3 { display: grid; grid-template-columns: 50px 1fr; gap: 10px; height: 167px; }
+.d3-sidebar { display: flex; flex-direction: column; align-items: center; gap: 10px; padding-top: 2px; }
+.d3-nav {
+  width: 34px; height: 34px; border-radius: 11px;
+  background: var(--bg); box-shadow: var(--shadow-raised);
+  display: flex; align-items: center; justify-content: center; font-size: 13px;
+}
+.d3-nav.active { box-shadow: var(--shadow-inset); }
+.d3-content { display: flex; flex-direction: column; gap: 7px; }
+.d3-headline { font-family: 'Playfair Display', serif; font-size: 13px; font-weight: 700; line-height: 1.3; }
+.d3-line { height: 7px; background: var(--bg); box-shadow: var(--shadow-inset); border-radius: 4px; }
+.d3-cta {
+  margin-top: auto;
+  background: var(--bg); box-shadow: var(--shadow-raised);
+  border: none; border-radius: 9px; padding: 7px 13px;
+  font-size: 10px; font-weight: 700; color: var(--blue); cursor: pointer;
+  display: flex; align-items: center; gap: 5px;
+}
+
+/* ========================== */
+/* DIRECTION 4 — THE ARCHITECT */
+/* ========================== */
+.d4 { display: flex; flex-direction: column; gap: 8px; }
+.d4-header { display: flex; align-items: center; justify-content: space-between; }
+.d4-title { font-size: 12px; font-weight: 700; }
+.d4-chip { background: var(--blue); color: white; border-radius: 6px; padding: 2px 8px; font-size: 9px; font-weight: 600; }
+.d4-metrics { display: grid; grid-template-columns: repeat(3, 1fr); gap: 7px; }
+.d4-metric { background: var(--bg); box-shadow: var(--shadow-raised); border-radius: 10px; padding: 7px; }
+.d4-metric-val { font-size: 17px; font-weight: 700; }
+.d4-metric-label { font-size: 9px; color: var(--text-2); }
+.d4-table { background: var(--bg); box-shadow: var(--shadow-inset); border-radius: 10px; overflow: hidden; }
+.d4-row {
+  display: grid; grid-template-columns: 1fr 56px 38px;
+  padding: 6px 10px; border-bottom: 1px solid rgba(163,177,198,0.2);
+  align-items: center; gap: 8px;
+}
+.d4-row:last-child { border-bottom: none; }
+.d4-row-name { font-size: 10px; font-weight: 500; }
+.d4-row-sub { font-size: 9px; color: var(--text-2); }
+.d4-mini { height: 4px; background: var(--bg); box-shadow: var(--shadow-inset); border-radius: 2px; overflow: hidden; }
+.d4-mini-fill { height: 100%; background: var(--blue); border-radius: 2px; }
+.d4-pct { font-size: 10px; font-weight: 700; color: var(--text-2); text-align: right; }
+
+/* ========================== */
+/* DIRECTION 5 — MIDNIGHT COMMAND */
+/* ========================== */
+.d5-wrap {
+  background: #1a1f2e;
+  border-radius: 12px; padding: 13px;
+  display: flex; flex-direction: column; gap: 9px;
+}
+.d5-topbar { display: flex; align-items: center; justify-content: space-between; }
+.d5-title { font-family: 'Playfair Display', serif; font-size: 14px; font-weight: 700; color: #e8ecf4; }
+.d5-badge { background: #f5b44a; color: #1a1f2e; border-radius: 20px; padding: 3px 10px; font-size: 9px; font-weight: 700; }
+.d5-metrics { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.d5-card {
+  background: #1a1f2e;
+  box-shadow: 5px 5px 10px #0e1218, -5px -5px 10px #252b3d;
+  border-radius: 11px; padding: 9px 11px;
+}
+.d5-card-label { font-size: 9px; color: #9aa3c2; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 3px; }
+.d5-card-val { font-size: 19px; font-weight: 700; color: #6b8cd4; }
+.d5-card-val.gold { color: #f5b44a; }
+.d5-prog { background: #1a1f2e; box-shadow: inset 3px 3px 6px #0e1218, inset -3px -3px 6px #252b3d; border-radius: 3px; height: 5px; overflow: hidden; margin-top: 5px; }
+.d5-prog-fill { height: 100%; background: #f5b44a; border-radius: 3px; }
+.d5-list { background: #1a1f2e; box-shadow: 5px 5px 10px #0e1218, -5px -5px 10px #252b3d; border-radius: 11px; padding: 9px 11px; }
+.d5-list-label { font-size: 9px; color: #9aa3c2; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 5px; }
+.d5-row { display: flex; align-items: center; gap: 7px; padding: 5px 0; border-bottom: 1px solid rgba(37,43,61,0.9); }
+.d5-row:last-child { border-bottom: none; padding-bottom: 0; }
+.d5-rdot { width: 5px; height: 5px; border-radius: 50%; background: #f5b44a; flex-shrink: 0; }
+.d5-rname { font-size: 10px; color: #e8ecf4; flex: 1; }
+.d5-rstatus { font-size: 9px; color: #9aa3c2; }
+
+/* ========================= */
+/* DIRECTION 6 — THE EDITORIAL */
+/* ========================= */
+.d6 { display: flex; flex-direction: column; gap: 10px; }
+.d6-meta { display: flex; align-items: center; gap: 8px; }
+.d6-avatar { width: 22px; height: 22px; border-radius: 50%; background: var(--blue); }
+.d6-byline { font-size: 10px; color: var(--text-2); }
+.d6-byline strong { color: var(--text); font-weight: 600; }
+.d6-headline { font-family: 'Playfair Display', serif; font-size: 15px; font-weight: 700; line-height: 1.3; color: var(--text); }
+.d6-deck { font-size: 11px; color: var(--text-2); line-height: 1.6; }
+.d6-divider { height: 1px; background: rgba(163,177,198,0.4); }
+.d6-cta {
+  background: var(--bg); box-shadow: var(--shadow-raised);
+  border-radius: 12px; padding: 10px 14px;
+  display: flex; align-items: center; justify-content: space-between; gap: 10px;
+}
+.d6-cta-text { font-size: 10px; color: var(--text); font-weight: 600; line-height: 1.4; flex: 1; }
+.d6-cta-btn { background: var(--blue); color: white; border-radius: 8px; padding: 6px 12px; font-size: 10px; font-weight: 600; flex-shrink: 0; }
+
+/* === Color Bars === */
+.bar-d1 { background: linear-gradient(90deg, #e0e5ec 15%, #4b6cb7 50%, #4caf7d 85%); }
+.bar-d2 { background: linear-gradient(90deg, #e0e5ec 10%, #4b6cb7 35%, #f0a030 65%, #4caf7d 90%); }
+.bar-d3 { background: linear-gradient(90deg, #e0e5ec 15%, #31344b 50%, #4b6cb7 85%); }
+.bar-d4 { background: linear-gradient(90deg, #e0e5ec 15%, #4b6cb7 45%, #444b6e 80%); }
+.bar-d5 { background: linear-gradient(90deg, #1a1f2e 15%, #6b8cd4 50%, #f5b44a 85%); }
+.bar-d6 { background: linear-gradient(90deg, #e0e5ec 10%, #31344b 40%, #4b6cb7 65%, #f0a030 90%); }
+
+/* Trait dots */
+.d-blue { background: #4b6cb7; }
+.d-gold { background: #f0a030; }
+.d-green { background: #4caf7d; }
+.d-dark { background: #1a1f2e; }
+.d-mid { background: #444b6e; }
+
+/* === Footer === */
+.page-footer {
+  max-width: 840px;
+  margin: 56px auto 0;
+  text-align: center;
+  padding: 36px 40px;
+  background: var(--bg);
+  box-shadow: var(--shadow-raised);
+  border-radius: var(--radius);
+}
+
+.page-footer h2 { font-family: 'Playfair Display', serif; font-size: 24px; font-weight: 700; margin-bottom: 12px; }
+.page-footer p { color: var(--text-2); font-size: 14px; line-height: 1.7; max-width: 560px; margin: 0 auto; }
+</style>
+</head>
+<body>
+
+<button class="mode-toggle" onclick="toggleDark()" id="toggleBtn">
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" id="modeIcon"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+  <span id="toggleLabel">Dark Mode</span>
+  <div class="toggle-track"><div class="toggle-thumb"></div></div>
+</button>
+
+<header class="page-header">
+  <span class="badge">Step 9 · Design Directions</span>
+  <h1>Six Visual Directions<br>for Direct Marketing Mastery School</h1>
+  <p>Each direction is a complete visual philosophy — a different answer to how this platform should <em>feel</em>. Review all six, then tell Sally which one resonates, or which elements you'd combine.</p>
+</header>
+
+<div class="directions-grid">
+
+  <!-- ========= D1: THE JOURNEY ========= -->
+  <article class="direction-card">
+    <div class="color-bar bar-d1"></div>
+    <div class="direction-header">
+      <div class="direction-header-top">
+        <span class="direction-num">1</span>
+        <h2 class="direction-name">The Journey</h2>
+      </div>
+      <p class="direction-tagline">Curriculum as a map. Progress is the product.</p>
+    </div>
+    <div class="mockup">
+      <div class="mockup-inner">
+        <div class="d1">
+          <div class="d1-greeting">Good morning, Mister Dest.</div>
+          <div class="d1-path">
+            <div class="d1-node">
+              <div class="d1-dot done">✓</div>
+              <div class="d1-label">Research</div>
+            </div>
+            <div class="d1-line" style="background: linear-gradient(90deg, var(--success), var(--sh-dark)); margin-top: 14px; flex: 1;"></div>
+            <div class="d1-node">
+              <div class="d1-dot active">2</div>
+              <div class="d1-label">Traffic</div>
+            </div>
+            <div class="d1-line" style="background: var(--sh-dark); flex: 1; margin-top: 14px;"></div>
+            <div class="d1-node">
+              <div class="d1-dot">3</div>
+              <div class="d1-label">Funnels</div>
+            </div>
+            <div class="d1-line" style="background: var(--sh-dark); flex: 1; margin-top: 14px;"></div>
+            <div class="d1-node">
+              <div class="d1-dot">4</div>
+              <div class="d1-label">Email</div>
+            </div>
+            <div class="d1-line" style="background: var(--sh-dark); flex: 1; margin-top: 14px;"></div>
+            <div class="d1-node">
+              <div class="d1-dot">5</div>
+              <div class="d1-label">Advanced</div>
+            </div>
+          </div>
+          <div class="d1-card">
+            <div class="d1-icon"></div>
+            <div class="d1-meta">
+              <div class="d1-lesson-title">Cold Traffic Foundations</div>
+              <div class="d1-bar"><div class="d1-fill"></div></div>
+            </div>
+            <button class="d1-btn">Continue →</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="direction-traits">
+      <div class="trait"><span class="dot d-blue"></span>"My Journey" path map is the first thing students see on every login</div>
+      <div class="trait"><span class="dot d-green"></span>Completed stages glow green; active stage pulses blue — you always know where you are</div>
+      <div class="trait"><span class="dot d-blue"></span>Progress visualization dominates — feeling forward motion beats seeing percentages</div>
+      <div class="trait"><span class="dot d-mid"></span>Best for: students who need a sense of direction and epic scope</div>
+    </div>
+  </article>
+
+  <!-- ========= D2: THE LAUNCHPAD ========= -->
+  <article class="direction-card">
+    <div class="color-bar bar-d2"></div>
+    <div class="direction-header">
+      <div class="direction-header-top">
+        <span class="direction-num">2</span>
+        <h2 class="direction-name">The Launchpad</h2>
+      </div>
+      <p class="direction-tagline">Action first. Gold marks every move moment.</p>
+    </div>
+    <div class="mockup">
+      <div class="mockup-inner">
+        <div class="d2">
+          <div class="d2-hero">
+            <div class="d2-hero-label">Ready to build</div>
+            <div class="d2-hero-title">Lead Funnel · Module 3</div>
+            <button class="d2-launch"><svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor" style="margin-right:5px;vertical-align:middle;"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>Launch It</button>
+          </div>
+          <div class="d2-stats">
+            <div class="d2-stat">
+              <div class="d2-stat-val">3</div>
+              <div class="d2-stat-label">Built</div>
+            </div>
+            <div class="d2-stat">
+              <div class="d2-stat-val">12</div>
+              <div class="d2-stat-label">Tests Run</div>
+            </div>
+            <div class="d2-stat">
+              <div class="d2-stat-val" style="display:flex;align-items:center;justify-content:center;gap:3px;"><svg width="13" height="13" viewBox="0 0 24 24" fill="var(--gold)"><path d="M12 2c0 0-5 4-5 9.5A5 5 0 0 0 17 11.5C17 6 12 2 12 2zm0 14a3 3 0 0 1-3-3c0-2 1.2-3.8 3-5.5 1.8 1.7 3 3.5 3 5.5a3 3 0 0 1-3 3z"/></svg>7</div>
+              <div class="d2-stat-label">Day Streak</div>
+            </div>
+          </div>
+          <div class="d2-loop">
+            <div class="d2-loop-label">Today's Loop</div>
+            <div class="d2-loop-steps">
+              <span class="d2-step done">Learn</span>
+              <span class="d2-arrow">→</span>
+              <span class="d2-step done">Build</span>
+              <span class="d2-arrow">→</span>
+              <span class="d2-step active">Launch</span>
+              <span class="d2-arrow">→</span>
+              <span class="d2-step">Test</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="direction-traits">
+      <div class="trait"><span class="dot d-gold"></span>Gold "⚡ Launch It" CTA is always the most prominent element on screen</div>
+      <div class="trait"><span class="dot d-blue"></span>The loop (Learn → Build → Launch → Test) is always visible as a progress ritual</div>
+      <div class="trait"><span class="dot d-green"></span>Metrics count builds shipped and tests run — not lessons watched</div>
+      <div class="trait"><span class="dot d-mid"></span>Best for: action-takers who need velocity feedback to stay motivated</div>
+    </div>
+  </article>
+
+  <!-- ========= D3: THE ACADEMY ========= -->
+  <article class="direction-card">
+    <div class="color-bar bar-d3"></div>
+    <div class="direction-header">
+      <div class="direction-header-top">
+        <span class="direction-num">3</span>
+        <h2 class="direction-name">The Academy</h2>
+      </div>
+      <p class="direction-tagline">Content fills the screen. One job. No noise.</p>
+    </div>
+    <div class="mockup">
+      <div class="mockup-inner" style="padding: 10px;">
+        <div class="d3">
+          <div class="d3-sidebar">
+            <div class="d3-nav">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+            </div>
+            <div class="d3-nav active">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+            </div>
+            <div class="d3-nav">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/><line x1="2" y1="20" x2="22" y2="20"/></svg>
+            </div>
+            <div class="d3-nav">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+            </div>
+          </div>
+          <div class="d3-content">
+            <div class="d3-headline">Cold Traffic: How Google Reads Intent</div>
+            <div class="d3-line" style="width: 90%;"></div>
+            <div class="d3-line" style="width: 75%;"></div>
+            <div class="d3-line" style="width: 85%;"></div>
+            <button class="d3-cta"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Mark Complete</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="direction-traits">
+      <div class="trait"><span class="dot d-blue"></span>Full-viewport lesson player — the content is the entire interface</div>
+      <div class="trait"><span class="dot d-mid"></span>Minimal chrome: icon sidebar only, zero visual noise competing for attention</div>
+      <div class="trait"><span class="dot d-green"></span>Single CTA per screen — "Mark Complete" always anchored at the bottom</div>
+      <div class="trait"><span class="dot d-mid"></span>Best for: focused deep readers who want to disappear into the material</div>
+    </div>
+  </article>
+
+  <!-- ========= D4: THE ARCHITECT ========= -->
+  <article class="direction-card">
+    <div class="color-bar bar-d4"></div>
+    <div class="direction-header">
+      <div class="direction-header-top">
+        <span class="direction-num">4</span>
+        <h2 class="direction-name">The Architect</h2>
+      </div>
+      <p class="direction-tagline">Structured. Data-rich. Track everything at a glance.</p>
+    </div>
+    <div class="mockup">
+      <div class="mockup-inner">
+        <div class="d4">
+          <div class="d4-header">
+            <div class="d4-title">My Progress</div>
+            <div class="d4-chip">Traffic Module</div>
+          </div>
+          <div class="d4-metrics">
+            <div class="d4-metric">
+              <div class="d4-metric-val">87%</div>
+              <div class="d4-metric-label">Completed</div>
+            </div>
+            <div class="d4-metric">
+              <div class="d4-metric-val" style="color: var(--gold);">3</div>
+              <div class="d4-metric-label">Builds Live</div>
+            </div>
+            <div class="d4-metric">
+              <div class="d4-metric-val" style="font-size:13px;display:flex;align-items:center;gap:3px;"><svg width="13" height="13" viewBox="0 0 24 24" fill="var(--gold)"><path d="M12 2c0 0-5 4-5 9.5A5 5 0 0 0 17 11.5C17 6 12 2 12 2zm0 14a3 3 0 0 1-3-3c0-2 1.2-3.8 3-5.5 1.8 1.7 3 3.5 3 5.5a3 3 0 0 1-3 3z"/></svg>7d</div>
+              <div class="d4-metric-label">Streak</div>
+            </div>
+          </div>
+          <div class="d4-table">
+            <div class="d4-row">
+              <div><div class="d4-row-name">Research</div><div class="d4-row-sub">8/8 lessons</div></div>
+              <div class="d4-mini"><div class="d4-mini-fill" style="width:100%"></div></div>
+              <div class="d4-pct">100%</div>
+            </div>
+            <div class="d4-row">
+              <div><div class="d4-row-name">Traffic</div><div class="d4-row-sub">5/10 lessons</div></div>
+              <div class="d4-mini"><div class="d4-mini-fill" style="width:50%"></div></div>
+              <div class="d4-pct">50%</div>
+            </div>
+            <div class="d4-row">
+              <div><div class="d4-row-name">Funnels</div><div class="d4-row-sub">0/12 lessons</div></div>
+              <div class="d4-mini"><div class="d4-mini-fill" style="width:0%"></div></div>
+              <div class="d4-pct">—</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="direction-traits">
+      <div class="trait"><span class="dot d-blue"></span>Stripe-inspired: data tables + panel layout, built for the analytical mind</div>
+      <div class="trait"><span class="dot d-mid"></span>Metrics as navigation anchors — numbers tell you where to go next</div>
+      <div class="trait"><span class="dot d-green"></span>Progress shown as absolute + percent (5/10) — no ambiguity, ever</div>
+      <div class="trait"><span class="dot d-mid"></span>Best for: the owner-operator who wants to see everything at once</div>
+    </div>
+  </article>
+
+  <!-- ========= D5: MIDNIGHT COMMAND ========= -->
+  <article class="direction-card">
+    <div class="color-bar bar-d5"></div>
+    <div class="direction-header">
+      <div class="direction-header-top">
+        <span class="direction-num">5</span>
+        <h2 class="direction-name">Midnight Command</h2>
+      </div>
+      <p class="direction-tagline">Dark neumorphism. Carved from the night.</p>
+    </div>
+    <div class="mockup">
+      <div class="mockup-inner" style="background:#1a1f2e; box-shadow: inset 6px 6px 12px #0e1218, inset -6px -6px 12px #252b3d; padding:12px;">
+        <div class="d5-wrap" style="padding: 0;">
+          <div class="d5-topbar">
+            <div class="d5-title">My Journey</div>
+            <div class="d5-badge" style="display:flex;align-items:center;gap:4px;"><svg width="10" height="10" viewBox="0 0 24 24" fill="#1a1f2e"><path d="M12 2c0 0-5 4-5 9.5A5 5 0 0 0 17 11.5C17 6 12 2 12 2zm0 14a3 3 0 0 1-3-3c0-2 1.2-3.8 3-5.5 1.8 1.7 3 3.5 3 5.5a3 3 0 0 1-3 3z"/></svg>7 Day Streak</div>
+          </div>
+          <div class="d5-metrics">
+            <div class="d5-card">
+              <div class="d5-card-label">Traffic Module</div>
+              <div class="d5-card-val">45%</div>
+              <div class="d5-prog"><div class="d5-prog-fill" style="width:45%"></div></div>
+            </div>
+            <div class="d5-card">
+              <div class="d5-card-label">Builds Launched</div>
+              <div class="d5-card-val gold">3</div>
+            </div>
+          </div>
+          <div class="d5-list">
+            <div class="d5-list-label">Up Next</div>
+            <div class="d5-row">
+              <div class="d5-rdot"></div>
+              <div class="d5-rname">Cold Traffic Foundations</div>
+              <div class="d5-rstatus">Now</div>
+            </div>
+            <div class="d5-row">
+              <div class="d5-rdot" style="background:#9aa3c2;"></div>
+              <div class="d5-rname" style="color:#9aa3c2;">Intent Mapping with AI</div>
+              <div class="d5-rstatus">Next</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="direction-traits">
+      <div class="trait"><span class="dot d-dark"></span>Navy-slate neumorphism — same depth technique as light mode, inverted palette</div>
+      <div class="trait"><span class="dot d-gold"></span>Gold (#f5b44a) pops dramatically on dark — streak and launch moments shine</div>
+      <div class="trait"><span class="dot d-blue"></span>Light blue (#6b8cd4) reads cleanly against dark backgrounds — no eye strain</div>
+      <div class="trait"><span class="dot d-mid"></span>Best for: late-night builders who want a premium, carved-dark interface</div>
+    </div>
+  </article>
+
+  <!-- ========= D6: THE EDITORIAL ========= -->
+  <article class="direction-card">
+    <div class="color-bar bar-d6"></div>
+    <div class="direction-header">
+      <div class="direction-header-top">
+        <span class="direction-num">6</span>
+        <h2 class="direction-name">The Editorial</h2>
+      </div>
+      <p class="direction-tagline">Trust through writing. The blog owns the top of the funnel.</p>
+    </div>
+    <div class="mockup">
+      <div class="mockup-inner">
+        <div class="d6">
+          <div class="d6-meta">
+            <div class="d6-avatar"></div>
+            <div class="d6-byline"><strong>Mister Dest</strong> · Feb 17, 2026 · 6 min read</div>
+          </div>
+          <div class="d6-headline">Why Your Funnel Isn't Converting<br>(And It's Not Your Copy)</div>
+          <div class="d6-deck">Most marketers optimize the wrong thing first. The answer isn't better headlines — it's understanding what your traffic is actually looking for before they land.</div>
+          <div class="d6-divider"></div>
+          <div class="d6-cta">
+            <div class="d6-cta-text">See this applied live →<br>Free lesson: Traffic Foundations</div>
+            <div class="d6-cta-btn">Start Free</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="direction-traits">
+      <div class="trait"><span class="dot d-blue"></span>Editorial grid, personal byline, intimate reading experience (Substack energy)</div>
+      <div class="trait"><span class="dot d-gold"></span>Inline CTAs flow naturally from article → free lesson → registration</div>
+      <div class="trait"><span class="dot d-mid"></span>Playfair Display dominates — authority established through typography alone</div>
+      <div class="trait"><span class="dot d-mid"></span>Best for: trust-first cold traffic strategy; the blog is the real product page</div>
+    </div>
+  </article>
+
+</div>
+
+<footer class="page-footer">
+  <h2>Which direction speaks to you?</h2>
+  <p>Tell Sally a number — or mix and match. For example: <em>"Direction 1 as the base, with Direction 2's gold Launch button and Direction 5's dark mode."</em> There's no wrong answer here. Your gut reaction in the first 3 seconds is usually right.</p>
+</footer>
+
+<script>
+  function toggleDark() {
+    const html = document.documentElement;
+    const isDark = html.getAttribute('data-theme') === 'dark';
+    html.setAttribute('data-theme', isDark ? 'light' : 'dark');
+    document.getElementById('toggleLabel').textContent = isDark ? 'Dark Mode' : 'Light Mode';
+  }
+  // Start in dark mode as requested
+  document.documentElement.setAttribute('data-theme', 'dark');
+  document.getElementById('toggleLabel').textContent = 'Light Mode';
+</script>
+</body>
+</html>

@@ -1,0 +1,14 @@
+graph TD
+  Blog[Blog Posts\nFree Traffic via SEO] --> Lessons[Free Lesson Previews\nLead Magnet]
+  Lessons --> EmailList[Email List\nEncharge Onboarding]
+  EmailList --> Course[Course Purchase\n$399 one-time]
+  Course --> Discovery[Discovery Call\nFree - Cal.com]
+  Discovery --> Group[Group Program\n$999 / 3 months]
+  Group --> DWY[Done-With-You Intensive\n$15,000 / 6 months]
+
+  subgraph Retention["Retention Loop"]
+    Dashboard[Student Dashboard] -->|Streak + Progress| Loop[Learn → Build → Launch]
+    Loop -->|Milestone emails| Dashboard
+  end
+
+  Course --> Dashboard

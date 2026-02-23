@@ -1,0 +1,19 @@
+graph TD
+  Report[Implementation Readiness Report\n19 Issues Found] --> Critical[🔴 Critical — 6 Issues\nMust Fix Before First Commit]
+  Report --> Medium[🟡 Medium — 7 Issues\nFix Before Launch]
+  Report --> Low[🟢 Low — 6 Issues\nMinor Cleanup]
+
+  Critical --> C1[Missing migration\nstudent_activity_log]
+  Critical --> C2[No admin seeding story\nAdmin panel inaccessible]
+  Critical --> C3[Soft Gate UX conflict\nStory 4.3 vs UX spec]
+  Critical --> C4[Launch Ritual missing\nfrom all stories]
+  Critical --> C5[Milestone idempotency\nno DB mechanism in Story 6.5]
+  Critical --> C6[Story 5.1 developer persona\nnot a user story]
+
+  Medium --> M1[R2 bucket init missing\nfrom Story 1.1]
+  Medium --> M2[Cart abandonment email\nnot in PRD or epics]
+  Medium --> M3[Blog inline CTAs\nnot in stories or schema]
+  Medium --> M4[Milestone Toast UI\nhas no story]
+
+  Low --> L1[Admin sidebar mismatch\nUX spec vs Story 8.1]
+  Low --> L2[Typo in Story 9.3\nrevenueLastt30Days]

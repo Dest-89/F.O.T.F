@@ -1,0 +1,19 @@
+graph TD
+  Platform[Platform UX — Hybrid Direction] --> D[Dashboard\nThe Journey]
+  Platform --> L[Lesson Player\nThe Academy]
+  Platform --> B[Blog & Marketing\nThe Editorial]
+  Platform --> All[All Screens\nMidnight Command]
+
+  D -->|Path map first above fold| JMap[Journey Path Map\nResearch → Traffic → Funnels → Email → Advanced]
+  D -->|Gold CTAs| Launch[Launch Ritual\nLearn → Build → Launch Loop]
+  L -->|Full viewport zero chrome| Single[Single CTA\nMark Complete]
+  B -->|Playfair + trust-building| CTA[Inline CTAs\nBlog → Free Lesson → Register]
+  All -->|data-theme=dark on html| Dark[Dark Neumorphic\n#1a1f2e + gold accents]
+
+  subgraph Components["Phase 1 Core Components"]
+    Card --> Button --> Input
+    Button --> Gold[Gold — Launch It only]
+    Button --> Blue[Blue — Primary CTAs]
+    ProgressBar --> Badge
+    JMap --> SoftGate[Soft Gate Overlay\nFires at end of free lesson]
+  end

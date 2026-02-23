@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard - Direct Marketing Mastery School</title>
+  
+  <link rel="stylesheet" href="/css/main.css">
+  <script src="https://unpkg.com/@phosphor-icons/web"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@editorjs/editorjs@latest"></script>
+  <script src="/js/theme.js"></script>
+  
+  <style>
+    .admin-layout {
+      display: grid;
+      grid-template-columns: 260px 1fr;
+      min-height: 100vh;
+    }
+    
+    .admin-sidebar {
+      background: var(--bg-secondary);
+      padding: 1.5rem;
+      border-right: 1px solid rgba(0,0,0,0.1);
+      position: fixed;
+      width: 260px;
+      height: 100vh;
+      overflow-y: auto;
+    }
+    
+    .admin-sidebar__logo {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding-bottom: 1.5rem;
+      margin-bottom: 1.5rem;
+      border-bottom: 1px solid rgba(0,0,0,0.1);
+      font-family: var(--font-display);
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      text-decoration: none;
+    }
+    
+    .admin-sidebar__menu {
+      list-style: none;
+    }
+    
+    .admin-sidebar__item {
+      margin-bottom: 0.25rem;
+    }
+    
+    .admin-sidebar__link {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.875rem 1rem;
+      border-radius: var(--radius-md);
+      color: var(--text-secondary);
+      text-decoration: none;
+      transition: all 0.2s ease;
+      cursor: pointer;
+    }
+    
+    .admin-sidebar__link:hover,
+    .admin-sidebar__link--active {
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      box-shadow: var(--shadow-light);
+    }
+    
+    .admin-sidebar__link i {
+      font-size: 1.25rem;
+    }
+    
+    .admin-content {
+      margin-left: 260px;
+      padding: 2rem;
+      background: var(--bg-primary);
+      min-height: 100vh;
+    }
+    
+    .admin-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2rem;
+      padding-bottom: 1.5rem;
+      border-bottom: 1px solid rgba(0,0,0,0.1);
+    }
+    
+    .admin-header__title {
+      font-size: 1.75rem;
+      margin: 0;
+    }
+    
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+    
+    .stat-card {
+      background: var(--bg-secondary);
+      border-radius: var(--radius-lg);
+      padding: 1.5rem;
+      box-shadow: var(--shadow-light);
+    }
+    
+    .stat-card__label {
+      font-size: 0.875rem;
+      color: var(--text-muted);
+      margin-bottom: 0.5rem;
+    }
+    
+    .stat-card__value {
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+    
+    .stat-card__change {
+      font-size: 0.8rem;
+      margin-top: 0.5rem;
+    }
+    
+    .stat-card__change--positive {
+      color: var(--accent-success);
+    }
+    
+    .data-table {
+      width: 100%;
+      background: var(--bg-secondary);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-light);
+      overflow: hidden;
+    }
+    
+    .data-table table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    
+    .data-table th,
+    .data-table td {
+      padding: 1rem;
+      text-align: left;
+      border-bottom: 1px solid rgba(0,0,0,0.1);
+    }
+    
+    .data-table th {
+      font-weight: 600;
+      color: var(--text-muted);
+      font-size: 0.875rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    
+    .data-table tr:hover {
+      background: rgba(0,0,0,0.02);
+    }
+    
+    .btn--sm {
+      padding: 0.5rem 1rem;
+      font-size: 0.875rem;
+    }
+    
+    .modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0,0,0,0.5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      padding: 2rem;
+    }
+    
+    .modal__content {
+      background: var(--bg-primary);
+      border-radius: var(--radius-lg);
+      width: 100%;
+      max-width: 700px;
+      max-height: 90vh;
+      overflow-y: auto;
+      box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25);
+    }
+    
+    .modal__header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.5rem;
+      border-bottom: 1px solid rgba(0,0,0,0.1);
+    }
+    
+    .modal__body {
+      padding: 1.5rem;
+    }
+    
+    .modal__footer {
+      display: flex;
+      justify-content: flex-end;
+      gap: 1rem;
+      padding: 1.5rem;
+      border-top: 1px solid rgba(0,0,0,0.1);
+    }
+    
+    .editor-container {
+      border: 1px solid rgba(0,0,0,0.1);
+      border-radius: var(--radius-md);
+      min-height: 300px;
+      padding: 1rem;
+    }
+    
+    @media (max-width: 968px) {
+      .admin-sidebar {
+        transform: translateX(-100%);
+        transition: transform 0.3s ease;
+      }
+      
+      .admin-sidebar--open {
+        transform: translateX(0);
+      }
+      
+      .admin-content {
+        margin-left: 0;
+      }
+      
+      .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+  </style>
+</head>
+<body x-data="adminApp()" x-init="init()">
+  <div class="admin-layout">
+    <!-- Sidebar -->
+    <aside class="admin-sidebar">
+      <a href="/" class="admin-sidebar__logo">
+        <i class="ph ph-graduation-cap"></i>
+        F.O.T.F. Admin
+      </a>
+      
+      <ul class="admin-sidebar__menu">
+        <li class="admin-sidebar__item">
+          <a @click.prevent="currentView = 'dashboard'" 
+             class="admin-sidebar__link"
+             :class="{ 'admin-sidebar__link--active': currentView === 'dashboard' }">
+            <i class="ph ph-squares-four"></i>
+            Dashboard
+          </a>
+        </li>
+        <li class="admin-sidebar__item">
+          <a @click.prevent="currentView = 'courses'" 
+             class="admin-sidebar__link"
+             :class="{ 'admin-sidebar__link--active': currentView === 'courses' }">
+            <i class="ph ph-books"></i>
+            Courses
+          </a>
+        </li>
+        <li class="admin-sidebar__item">
+          <a @click.prevent="currentView = 'blog'" 
+             class="admin-sidebar__link"
+             :class="{ 'admin-sidebar__link--active': currentView === 'blog' }">
+            <i class="ph ph-article"></i>
+            Blog Posts
+          </a>
+        </li>
+        <li class="admin-sidebar__item">
+          <a @click.prevent="currentView = 'students'" 
+             class="admin-sidebar__link"
+             :class="{ 'admin-sidebar__link--active': currentView === 'students' }">
+            <i class="ph ph-users"></i>
+            Students
+          </a>
+        </li>
+        <li class="admin-sidebar__item">
+          <a @click.prevent="currentView = 'analytics'" 
+             class="admin-sidebar__link"
+             :class="{ 'admin-sidebar__link--active': currentView === 'analytics' }">
+            <i class="ph ph-chart-line-up"></i>
+            Analytics
+          </a>
+        </li>
+        <li class="admin-sidebar__item" style="margin-top: 2rem;">
+          <a href="/" class="admin-sidebar__link">
+            <i class="ph ph-arrow-left"></i>
+            Back to Site
+          </a>
+        </li>
+      </ul>
+    </aside>
+    
+    <!-- Main Content -->
+    <main class="admin-content">
+      <!-- Dashboard View -->
+      <div x-show="currentView === 'dashboard'">
+        <div class="admin-header">
+          <h1 class="admin-header__title">Dashboard</h1>
+          <div x-text="new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })"
+               style="color: var(--text-muted);"></div>
+        </div>
+        
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-card__label">Total Users</div>
+            <div class="stat-card__value" x-text="stats.total_users || 0"></div>
+            <div class="stat-card__change stat-card__change--positive">
+              <i class="ph ph-trend-up"></i>
+              <span x-text="'+' + (stats.new_users_7d || 0) + ' this week'"></span>
+            </div>
+          </div>
+          
+          <div class="stat-card">
+            <div class="stat-card__label">Total Revenue</div>
+            <div class="stat-card__value" x-text="'$' + (stats.total_revenue_dollars || '0.00')"></div>
+            <div class="stat-card__change stat-card__change--positive">
+              <i class="ph ph-trend-up"></i>
+              <span x-text="(stats.new_purchases_7d || 0) + ' new sales'"></span>
+            </div>
+          </div>
+          
+          <div class="stat-card">
+            <div class="stat-card__label">Courses Sold</div>
+            <div class="stat-card__value" x-text="stats.total_purchases || 0"></div>
+          </div>
+          
+          <div class="stat-card">
+            <div class="stat-card__label">Active Users (7d)</div>
+            <div class="stat-card__value" x-text="stats.active_users_7d || 0"></div>
+          </div>
+        </div>
+        
+        <!-- Recent Activity -->
+        <h2 style="margin-bottom: 1rem;">Recent Activity</h2>
+        <div class="data-table">
+          <table>
+            <thead>
+              <tr>
+                <th>User</th>
+                <th>Event</th>
+                <th>Time</th>
+              </tr>
+            </thead>
+            <tbody>
+              <template x-for="activity in recentActivity" :key="activity.id">
+                <tr>
+                  <td x-text="activity.user_email"></td>
+                  <td>
+                    <span style="text-transform: capitalize;" x-text="activity.event_type.replace('_', ' ')"></span>
+                  </td>
+                  <td x-text="timeAgo(activity.created_at)"></td>
+                </tr>
+              </template>
+              <tr x-show="recentActivity.length === 0">
+                <td colspan="3" style="text-align: center; color: var(--text-muted);">No recent activity</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      
+      <!-- Courses View -->
+      <div x-show="currentView === 'courses'">
+        <div class="admin-header">
+          <h1 class="admin-header__title">Courses</h1>
+          <button @click="openCourseModal()" class="btn btn--primary">
+            <i class="ph ph-plus"></i>
+            New Course
+          </button>
+        </div>
+        
+        <div class="data-table">
+          <table>
+            <thead>
+              <tr>
+                <th>Title</th>
+                <th>Price</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <template x-for="course in courses" :key="course.id">
+                <tr>
+                  <td x-text="course.title"></td>
+                  <td x-text="'$' + (course.price / 100)"></td>
+                  <td>
+                    <span :style="course.published ? 'color: var(--accent-success);' : 'color: var(--text-muted);'"
+                          x-text="course.published ? 'Published' : 'Draft'"></span>
+                  </td>
+                  <td>
+                    <button @click="editCourse(course)" class="btn btn--sm btn--outline">Edit</button>
+                  </td>
+                </tr>
+              </template>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      
+      <!-- Other views would be implemented similarly -->
+      <div x-show="currentView === 'blog'">
+        <div class="admin-header">
+          <h1 class="admin-header__title">Blog Posts</h1>
+          <button class="btn btn--primary">
+            <i class="ph ph-plus"></i>
+            New Post
+          </button>
+        </div>
+        <p style="color: var(--text-muted);">Blog management coming soon...</p>
+      </div>
+      
+      <div x-show="currentView === 'students'">
+        <div class="admin-header">
+          <h1 class="admin-header__title">Students</h1>
+        </div>
+        <p style="color: var(--text-muted);">Student CRM coming soon...</p>
+      </div>
+      
+      <div x-show="currentView === 'analytics'">
+        <div class="admin-header">
+          <h1 class="admin-header__title">Analytics</h1>
+        </div>
+        <p style="color: var(--text-muted);">Detailed analytics coming soon...</p>
+      </div>
+    </main>
+  </div>
+  
+  <script>
+    const API_BASE_URL = window.location.origin.includes('localhost') 
+      ? 'http://localhost:8788' 
+      : 'https://fotf-platform-staging.destinhounkpef.workers.dev';
+    
+    function adminApp() {
+      return {
+        currentView: 'dashboard',
+        stats: {},
+        courses: [],
+        recentActivity: [],
+        loading: true,
+        
+        async init() {
+          const token = localStorage.getItem('token');
+          if (!token) {
+            window.location.href = '/login.html?redirect=' + encodeURIComponent('/admin/');
+            return;
+          }
+          
+          await this.loadDashboard();
+          await this.loadCourses();
+        },
+        
+        async loadDashboard() {
+          try {
+            const [statsRes, activityRes] = await Promise.all([
+              fetch(`${API_BASE_URL}/api/admin/analytics/dashboard`, {
+                headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+              }),
+              fetch(`${API_BASE_URL}/api/admin/analytics/activity?limit=10`, {
+                headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+              })
+            ]);
+            
+            if (statsRes.ok) {
+              const data = await statsRes.json();
+              this.stats = data.stats;
+            }
+            
+            if (activityRes.ok) {
+              const data = await activityRes.json();
+              this.recentActivity = data.activity;
+            }
+          } catch (error) {
+            console.error('Failed to load dashboard:', error);
+          }
+        },
+        
+        async loadCourses() {
+          try {
+            const response = await fetch(`${API_BASE_URL}/api/admin/courses`, {
+              headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+            });
+            
+            if (response.ok) {
+              const data = await response.json();
+              this.courses = data.courses;
+            }
+          } catch (error) {
+            console.error('Failed to load courses:', error);
+          }
+        },
+        
+        openCourseModal() {
+          alert('Course creation modal would open here');
+        },
+        
+        editCourse(course) {
+          alert(`Edit course: ${course.title}`);
+        },
+        
+        timeAgo(dateString) {
+          const date = new Date(dateString);
+          const now = new Date();
+          const seconds = Math.floor((now - date) / 1000);
+          
+          const intervals = {
+            year: 31536000,
+            month: 2592000,
+            week: 604800,
+            day: 86400,
+            hour: 3600,
+            minute: 60
+          };
+          
+          for (const [unit, secondsInUnit] of Object.entries(intervals)) {
+            const interval = Math.floor(seconds / secondsInUnit);
+            if (interval >= 1) {
+              return `${interval} ${unit}${interval > 1 ? 's' : ''} ago`;
+            }
+          }
+          return 'Just now';
+        }
+      };
+    }
+  </script>
+</body>
+</html>

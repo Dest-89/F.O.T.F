@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Blog - Direct Marketing Mastery School</title>
+  <meta name="description" content="Marketing insights, strategies, and first-principles thinking to help you grow your business without relying on borrowed platforms.">
+  
+  <link rel="stylesheet" href="/css/main.css">
+  <script src="https://unpkg.com/@phosphor-icons/web"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+  <script src="/js/utm.js"></script>
+  <script src="/js/theme.js"></script>
+  <script src="/js/auth.js"></script>
+  
+  <style>
+    .blog-hero {
+      text-align: center;
+      padding: 5rem 0 3rem;
+    }
+    
+    .blog-hero__title {
+      font-size: var(--text-3xl);
+      margin-bottom: 1rem;
+    }
+    
+    .blog-hero__subtitle {
+      font-size: var(--text-lg);
+      color: var(--text-secondary);
+      max-width: 600px;
+      margin: 0 auto;
+    }
+    
+    .search-bar {
+      max-width: 500px;
+      margin: 2rem auto 0;
+      position: relative;
+    }
+    
+    .search-bar input {
+      width: 100%;
+      padding: 1rem 1rem 1rem 3rem;
+      border-radius: var(--radius-full);
+      border: none;
+      background: var(--bg-primary);
+      box-shadow: var(--shadow-light);
+      font-size: 1rem;
+    }
+    
+    .search-bar i {
+      position: absolute;
+      left: 1rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-muted);
+      font-size: 1.25rem;
+    }
+    
+    .blog-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+      gap: 2rem;
+      padding: 2rem 0;
+    }
+    
+    .blog-card {
+      background: var(--bg-primary);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      box-shadow: var(--shadow-light);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      text-decoration: none;
+      color: inherit;
+    }
+    
+    .blog-card:hover {
+      transform: translateY(-8px);
+      box-shadow: 12px 12px 24px rgba(0,0,0,0.15), -12px -12px 24px rgba(255,255,255,0.05);
+    }
+    
+    .blog-card__image {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+    }
+    
+    .blog-card__content {
+      padding: 1.5rem;
+    }
+    
+    .blog-card__date {
+      font-size: 0.8rem;
+      color: var(--accent-primary);
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+    }
+    
+    .blog-card__title {
+      font-size: 1.25rem;
+      margin-bottom: 0.75rem;
+      line-height: 1.3;
+    }
+    
+    .blog-card__excerpt {
+      color: var(--text-secondary);
+      font-size: 0.95rem;
+      line-height: 1.6;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    
+    .blog-card__footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1rem 1.5rem;
+      background: var(--bg-secondary);
+      border-top: 1px solid rgba(0,0,0,0.1);
+    }
+    
+    .blog-card__read-time {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+    }
+    
+    .blog-card__cta {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--accent-primary);
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+    }
+    
+    .featured-post {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 3rem;
+      align-items: center;
+      background: var(--bg-primary);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      box-shadow: var(--shadow-light);
+      margin-bottom: 3rem;
+    }
+    
+    .featured-post__image {
+      width: 100%;
+      height: 100%;
+      min-height: 400px;
+      object-fit: cover;
+    }
+    
+    .featured-post__content {
+      padding: 3rem;
+    }
+    
+    .featured-post__badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.25rem;
+      padding: 0.35rem 0.75rem;
+      background: var(--accent-secondary);
+      color: #1a202c;
+      font-size: 0.75rem;
+      font-weight: 700;
+      border-radius: var(--radius-full);
+      margin-bottom: 1rem;
+      text-transform: uppercase;
+    }
+    
+    .featured-post__title {
+      font-size: var(--text-2xl);
+      margin-bottom: 1rem;
+    }
+    
+    .featured-post__excerpt {
+      color: var(--text-secondary);
+      font-size: 1.1rem;
+      line-height: 1.7;
+      margin-bottom: 2rem;
+    }
+    
+    .pagination {
+      display: flex;
+      justify-content: center;
+      gap: 0.5rem;
+      padding: 3rem 0;
+    }
+    
+    .pagination__btn {
+      padding: 0.75rem 1rem;
+      background: var(--bg-primary);
+      border: none;
+      border-radius: var(--radius-md);
+      color: var(--text-primary);
+      font-size: 0.95rem;
+      cursor: pointer;
+      box-shadow: var(--shadow-light);
+      transition: all 0.2s ease;
+    }
+    
+    .pagination__btn:hover,
+    .pagination__btn--active {
+      background: var(--accent-primary);
+      color: white;
+    }
+    
+    .pagination__btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    
+    @media (max-width: 768px) {
+      .featured-post {
+        grid-template-columns: 1fr;
+      }
+      
+      .featured-post__image {
+        min-height: 200px;
+      }
+      
+      .blog-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body x-data="blogList()" x-init="loadPosts()">
+  <a href="#main-content" class="skip-link">Skip to main content</a>
+  
+  <header class="header">
+    <div class="header__inner">
+      <a href="/" class="header__logo">
+        <i class="ph ph-graduation-cap" style="font-size: 1.5rem;"></i>
+        F.O.T.F. School
+      </a>
+      <nav class="header__nav">
+        <a href="/courses/">Courses</a>
+        <a href="/blog/" class="active">Blog</a>
+        <a href="/services.html">Consulting</a>
+        <template x-if="!$store.auth.isAuthenticated">
+          <a href="/login.html" class="btn btn--primary" style="padding: var(--space-2) var(--space-4);">Sign In</a>
+        </template>
+        <template x-if="$store.auth.isAuthenticated">
+          <a href="/dashboard/">
+            <i class="ph ph-user-circle" style="font-size: 1.5rem;"></i>
+          </a>
+        </template>
+        <button class="theme-toggle" @click="$store.theme.toggle()">
+          <i class="ph" :class="$store.theme.mode === 'dark' ? 'ph-sun' : 'ph-moon'"></i>
+        </button>
+      </nav>
+    </div>
+  </header>
+  
+  <main id="main-content">
+    <!-- Hero -->
+    <section class="blog-hero">
+      <div class="container">
+        <h1 class="blog-hero__title">The F.O.T.F. Blog</h1>
+        <p class="blog-hero__subtitle">
+          Marketing insights from first principles. No tool tutorials, just timeless strategies 
+          that work on any platform you own.
+        </p>
+        
+        <div class="search-bar">
+          <i class="ph ph-magnifying-glass"></i>
+          <input 
+            type="text" 
+            placeholder="Search articles..."
+            x-model="searchQuery"
+            @keyup.enter="search()"
+          >
+        </div>
+      </div>
+    </section>
+    
+    <section class="section" style="background: var(--bg-secondary);">
+      <div class="container">
+        <!-- Loading State -->
+        <div x-show="loading" class="blog-grid">
+          <template x-for="i in 3">
+            <div class="blog-card">
+              <div class="skeleton" style="height: 200px;"></div>
+              <div style="padding: 1.5rem;">
+                <div class="skeleton" style="height: 20px; width: 30%; margin-bottom: 1rem;"></div>
+                <div class="skeleton" style="height: 28px; margin-bottom: 1rem;"></div>
+                <div class="skeleton" style="height: 60px;"></div>
+              </div>
+            </div>
+          </template>
+        </div>
+        
+        <!-- Featured Post (First post) -->
+        <template x-if="!loading && posts.length > 0 && page === 1">
+          <a :href="'/blog/' + posts[0].slug" class="featured-post">
+            <img 
+              :src="posts[0].cover_image_url || 'https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=800&h=600&fit=crop'" 
+              :alt="posts[0].title"
+              class="featured-post__image"
+            >
+            <div class="featured-post__content">
+              <span class="featured-post__badge">
+                <i class="ph ph-star"></i>
+                Featured
+              </span>
+              <h2 class="featured-post__title" x-text="posts[0].title"></h2>
+              <p class="featured-post__excerpt" x-text="posts[0].excerpt || 'Read this featured article to learn key marketing principles that will transform your business.'"></p>
+              <span class="btn btn--primary">
+                Read Article
+                <i class="ph ph-arrow-right"></i>
+              </span>
+            </div>
+          </a>
+        </template>
+        
+        <!-- Blog Grid -->
+        <div x-show="!loading" class="blog-grid">
+          <template x-for="post in (page === 1 ? posts.slice(1) : posts)" :key="post.id">
+            <a :href="'/blog/' + post.slug" class="blog-card">
+              <img 
+                :src="post.cover_image_url || 'https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=600&h=400&fit=crop'" 
+                :alt="post.title"
+                class="blog-card__image"
+              >
+              <div class="blog-card__content">
+                <div class="blog-card__date" x-text="formatDate(post.published_at || post.created_at)"></div>
+                <h2 class="blog-card__title" x-text="post.title"></h2>
+                <p class="blog-card__excerpt" x-text="post.excerpt || 'Click to read more about this marketing topic...'"></p>
+              </div>
+              <div class="blog-card__footer">
+                <span class="blog-card__read-time">
+                  <i class="ph ph-clock"></i>
+                  5 min read
+                </span>
+                <span class="blog-card__cta">
+                  Read
+                  <i class="ph ph-arrow-right"></i>
+                </span>
+              </div>
+            </a>
+          </template>
+        </div>
+        
+        <!-- Empty State -->
+        <div x-show="!loading && posts.length === 0" class="text-center" style="padding: 4rem 0;">
+          <i class="ph ph-article" style="font-size: 4rem; color: var(--text-muted); margin-bottom: 1rem;"></i>
+          <h3>No posts found</h3>
+          <p style="color: var(--text-secondary);">Check back soon for new content!</p>
+        </div>
+        
+        <!-- Pagination -->
+        <div x-show="!loading && totalPages > 1" class="pagination">
+          <button 
+            class="pagination__btn" 
+            @click="changePage(page - 1)"
+            :disabled="page === 1"
+          >
+            <i class="ph ph-caret-left"></i>
+          </button>
+          
+          <template x-for="p in totalPages" :key="p">
+            <button 
+              class="pagination__btn"
+              :class="{ 'pagination__btn--active': p === page }"
+              @click="changePage(p)"
+              x-text="p"
+            ></button>
+          </template>
+          
+          <button 
+            class="pagination__btn" 
+            @click="changePage(page + 1)"
+            :disabled="page === totalPages"
+          >
+            <i class="ph ph-caret-right"></i>
+          </button>
+        </div>
+      </div>
+    </section>
+    
+    <!-- Newsletter CTA -->
+    <section class="section">
+      <div class="container">
+        <div class="card text-center" style="max-width: 600px; margin: 0 auto;">
+          <i class="ph ph-envelope-open" style="font-size: 3rem; color: var(--accent-primary); margin-bottom: 1rem;"></i>
+          <h2>Get Marketing Insights Weekly</h2>
+          <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">
+            Join thousands of marketers learning from first principles. No spam, unsubscribe anytime.
+          </p>
+          <a href="/register.html" class="btn btn--primary">
+            <i class="ph ph-user-plus"></i>
+            Create Free Account
+          </a>
+        </div>
+      </div>
+    </section>
+  </main>
+  
+  <footer class="footer">
+    <div class="footer__inner">
+      <p>&copy; 2026 Direct Marketing Mastery School. All rights reserved.</p>
+    </div>
+  </footer>
+  
+  <script>
+    const API_BASE_URL = window.location.origin.includes('localhost') 
+      ? 'http://localhost:8788' 
+      : 'https://fotf-platform-staging.destinhounkpef.workers.dev';
+    
+    function blogList() {
+      return {
+        posts: [],
+        loading: true,
+        page: 1,
+        totalPages: 1,
+        searchQuery: '',
+        
+        async loadPosts() {
+          this.loading = true;
+          try {
+            const response = await fetch(`${API_BASE_URL}/api/blog?page=${this.page}`);
+            if (response.ok) {
+              const data = await response.json();
+              this.posts = data.posts;
+              this.totalPages = data.pagination.total_pages;
+            }
+          } catch (error) {
+            console.error('Failed to load posts:', error);
+          } finally {
+            this.loading = false;
+          }
+        },
+        
+        async search() {
+          if (!this.searchQuery.trim()) {
+            this.loadPosts();
+            return;
+          }
+          
+          this.loading = true;
+          try {
+            const response = await fetch(`${API_BASE_URL}/api/blog/search?q=${encodeURIComponent(this.searchQuery)}`);
+            if (response.ok) {
+              const data = await response.json();
+              this.posts = data.posts;
+              this.totalPages = 1;
+            }
+          } catch (error) {
+            console.error('Search failed:', error);
+          } finally {
+            this.loading = false;
+          }
+        },
+        
+        changePage(newPage) {
+          if (newPage < 1 || newPage > this.totalPages) return;
+          this.page = newPage;
+          this.loadPosts();
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        },
+        
+        formatDate(dateString) {
+          return new Date(dateString).toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+          });
+        }
+      };
+    }
+  </script>
+</body>
+</html>
