@@ -1,0 +1,51 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "fotf-platform",
+  "account_id": "fb5982af87fd8967975e50de1b4d9d12",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-02-19",
+  "compatibility_flags": ["nodejs_compat"],
+  "observability": {
+    "enabled": true
+  },
+  "vars": {
+    "EMAILIT_FROM_EMAIL": "hello@funnelsonthefly.com",
+    "EMAILIT_FROM_NAME": "Direct Marketing Mastery School",
+    "APP_URL": "https://fotf-platform.destinhounkpef.workers.dev"
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "fotf-platform-production",
+      "database_id": "63b467b3-a5dd-44c2-be18-779524e7b954"
+    }
+  ],
+  "r2_buckets": [
+    {
+      "binding": "ASSETS",
+      "bucket_name": "fotf-assets"
+    }
+  ],
+  "env": {
+    "staging": {
+      "vars": {
+        "EMAILIT_FROM_EMAIL": "hello@funnelsonthefly.com",
+        "EMAILIT_FROM_NAME": "Direct Marketing Mastery School",
+        "APP_URL": "https://fotf-platform-staging.destinhounkpef.workers.dev"
+      },
+      "d1_databases": [
+        {
+          "binding": "DB",
+          "database_name": "fotf-platform-staging",
+          "database_id": "b876a4f7-1eb9-4e26-858f-faad5d0a5eff"
+        }
+      ],
+      "r2_buckets": [
+        {
+          "binding": "ASSETS",
+          "bucket_name": "fotf-assets"
+        }
+      ]
+    }
+  }
+}
