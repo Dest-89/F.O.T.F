@@ -6,35 +6,42 @@
   <title>Admin Dashboard - Direct Marketing Mastery School</title>
   
   <link rel="stylesheet" href="/css/main.css">
+  <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
   <script src="https://unpkg.com/@phosphor-icons/web"></script>
   <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@editorjs/editorjs@latest"></script>
+  <script src="https://cdn.quilljs.com/1.3.6/quill.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
   <script src="/js/theme.js"></script>
   
   <style>
+    :root {
+      --sidebar-width: 280px;
+    }
+    
     .admin-layout {
-      display: grid;
-      grid-template-columns: 260px 1fr;
+      display: flex;
       min-height: 100vh;
     }
     
     .admin-sidebar {
+      width: var(--sidebar-width);
       background: var(--bg-secondary);
-      padding: 1.5rem;
       border-right: 1px solid rgba(0,0,0,0.1);
       position: fixed;
-      width: 260px;
       height: 100vh;
       overflow-y: auto;
+      z-index: 100;
+    }
+    
+    .admin-sidebar__header {
+      padding: 1.5rem;
+      border-bottom: 1px solid rgba(0,0,0,0.1);
     }
     
     .admin-sidebar__logo {
       display: flex;
       align-items: center;
       gap: 0.75rem;
-      padding-bottom: 1.5rem;
-      margin-bottom: 1.5rem;
-      border-bottom: 1px solid rgba(0,0,0,0.1);
       font-family: var(--font-display);
       font-size: 1.25rem;
       font-weight: 700;
@@ -44,6 +51,7 @@
     
     .admin-sidebar__menu {
       list-style: none;
+      padding: 1rem;
     }
     
     .admin-sidebar__item {
@@ -60,6 +68,10 @@
       text-decoration: none;
       transition: all 0.2s ease;
       cursor: pointer;
+      border: none;
+      background: none;
+      width: 100%;
+      font-size: 0.95rem;
     }
     
     .admin-sidebar__link:hover,
@@ -74,7 +86,8 @@
     }
     
     .admin-content {
-      margin-left: 260px;
+      flex: 1;
+      margin-left: var(--sidebar-width);
       padding: 2rem;
       background: var(--bg-primary);
       min-height: 100vh;
@@ -120,15 +133,6 @@
       color: var(--text-primary);
     }
     
-    .stat-card__change {
-      font-size: 0.8rem;
-      margin-top: 0.5rem;
-    }
-    
-    .stat-card__change--positive {
-      color: var(--accent-success);
-    }
-    
     .data-table {
       width: 100%;
       background: var(--bg-secondary);
@@ -166,28 +170,39 @@
       font-size: 0.875rem;
     }
     
-    .modal {
+    .btn--icon {
+      padding: 0.5rem;
+      width: 36px;
+      height: 36px;
+    }
+    
+    .modal-overlay {
       position: fixed;
       top: 0;
       left: 0;
       right: 0;
       bottom: 0;
-      background: rgba(0,0,0,0.5);
+      background: rgba(0,0,0,0.6);
       display: flex;
       align-items: center;
       justify-content: center;
       z-index: 1000;
       padding: 2rem;
+      backdrop-filter: blur(4px);
     }
     
-    .modal__content {
+    .modal {
       background: var(--bg-primary);
       border-radius: var(--radius-lg);
       width: 100%;
-      max-width: 700px;
+      max-width: 800px;
       max-height: 90vh;
       overflow-y: auto;
-      box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25);
+      box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
+    }
+    
+    .modal--large {
+      max-width: 1000px;
     }
     
     .modal__header {
@@ -196,6 +211,27 @@
       align-items: center;
       padding: 1.5rem;
       border-bottom: 1px solid rgba(0,0,0,0.1);
+    }
+    
+    .modal__title {
+      font-size: 1.25rem;
+      margin: 0;
+    }
+    
+    .modal__close {
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      cursor: pointer;
+      color: var(--text-muted);
+      padding: 0.25rem;
+      border-radius: var(--radius-md);
+      transition: all 0.2s ease;
+    }
+    
+    .modal__close:hover {
+      background: var(--bg-secondary);
+      color: var(--text-primary);
     }
     
     .modal__body {
@@ -208,16 +244,340 @@
       gap: 1rem;
       padding: 1.5rem;
       border-top: 1px solid rgba(0,0,0,0.1);
+      background: var(--bg-secondary);
+    }
+    
+    .form-section {
+      margin-bottom: 2rem;
+    }
+    
+    .form-section__title {
+      font-size: 1rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+      color: var(--text-primary);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+    
+    .form-group {
+      margin-bottom: 1.25rem;
+    }
+    
+    .form-group label {
+      display: block;
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: var(--text-secondary);
+      margin-bottom: 0.5rem;
+    }
+    
+    .form-group input,
+    .form-group textarea,
+    .form-group select {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      border: none;
+      border-radius: var(--radius-md);
+      background: var(--bg-secondary);
+      color: var(--text-primary);
+      font-size: 0.95rem;
+      box-shadow: var(--shadow-inset);
+    }
+    
+    .form-group input:focus,
+    .form-group textarea:focus,
+    .form-group select:focus {
+      outline: 2px solid var(--accent-primary);
+    }
+    
+    .form-group small {
+      display: block;
+      margin-top: 0.25rem;
+      color: var(--text-muted);
+      font-size: 0.8rem;
+    }
+    
+    .checkbox-group {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.75rem 0;
+    }
+    
+    .checkbox-group input[type="checkbox"] {
+      width: 20px;
+      height: 20px;
+      accent-color: var(--accent-primary);
     }
     
     .editor-container {
-      border: 1px solid rgba(0,0,0,0.1);
+      background: white;
       border-radius: var(--radius-md);
       min-height: 300px;
-      padding: 1rem;
     }
     
-    @media (max-width: 968px) {
+    .editor-container .ql-container {
+      min-height: 250px;
+    }
+    
+    .lessons-list {
+      list-style: none;
+    }
+    
+    .lesson-item {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 1rem;
+      background: var(--bg-secondary);
+      border-radius: var(--radius-md);
+      margin-bottom: 0.75rem;
+      cursor: grab;
+      transition: all 0.2s ease;
+      box-shadow: var(--shadow-light);
+    }
+    
+    .lesson-item:hover {
+      box-shadow: var(--shadow-light), 0 4px 12px rgba(0,0,0,0.1);
+    }
+    
+    .lesson-item.sortable-ghost {
+      opacity: 0.4;
+      background: var(--accent-primary);
+    }
+    
+    .lesson-item.sortable-drag {
+      cursor: grabbing;
+      transform: rotate(2deg);
+    }
+    
+    .lesson-item__drag {
+      color: var(--text-muted);
+      cursor: grab;
+    }
+    
+    .lesson-item__number {
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--accent-primary);
+      color: white;
+      border-radius: var(--radius-full);
+      font-weight: 600;
+      font-size: 0.875rem;
+    }
+    
+    .lesson-item__content {
+      flex: 1;
+    }
+    
+    .lesson-item__title {
+      font-weight: 500;
+      margin-bottom: 0.25rem;
+    }
+    
+    .lesson-item__meta {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      display: flex;
+      gap: 1rem;
+    }
+    
+    .lesson-item__badge {
+      padding: 0.15rem 0.5rem;
+      background: var(--accent-success);
+      color: white;
+      border-radius: var(--radius-full);
+      font-size: 0.7rem;
+    }
+    
+    .lesson-item__badge--draft {
+      background: var(--text-muted);
+    }
+    
+    .lesson-item__badge--free {
+      background: var(--accent-secondary);
+      color: #1a202c;
+    }
+    
+    .lesson-item__actions {
+      display: flex;
+      gap: 0.5rem;
+    }
+    
+    .timeline {
+      position: relative;
+      padding-left: 2rem;
+    }
+    
+    .timeline::before {
+      content: '';
+      position: absolute;
+      left: 7px;
+      top: 0;
+      bottom: 0;
+      width: 2px;
+      background: var(--bg-secondary);
+    }
+    
+    .timeline-item {
+      position: relative;
+      padding-bottom: 1.5rem;
+    }
+    
+    .timeline-item::before {
+      content: '';
+      position: absolute;
+      left: -1.5rem;
+      top: 0.25rem;
+      width: 12px;
+      height: 12px;
+      background: var(--accent-primary);
+      border-radius: 50%;
+      border: 2px solid var(--bg-primary);
+    }
+    
+    .timeline-item__date {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-bottom: 0.25rem;
+    }
+    
+    .timeline-item__title {
+      font-weight: 500;
+      margin-bottom: 0.25rem;
+    }
+    
+    .timeline-item__description {
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+    }
+    
+    .student-profile {
+      display: grid;
+      grid-template-columns: 300px 1fr;
+      gap: 2rem;
+    }
+    
+    .student-card {
+      background: var(--bg-secondary);
+      border-radius: var(--radius-lg);
+      padding: 1.5rem;
+      box-shadow: var(--shadow-light);
+      height: fit-content;
+    }
+    
+    .student-card__avatar {
+      width: 100px;
+      height: 100px;
+      margin: 0 auto 1rem;
+      background: var(--accent-primary);
+      border-radius: var(--radius-full);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 2.5rem;
+      font-weight: 600;
+    }
+    
+    .student-card__name {
+      text-align: center;
+      font-size: 1.25rem;
+      margin-bottom: 0.5rem;
+    }
+    
+    .student-card__email {
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      margin-bottom: 1.5rem;
+    }
+    
+    .student-card__stats {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      text-align: center;
+    }
+    
+    .student-card__stat-value {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--accent-primary);
+    }
+    
+    .student-card__stat-label {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+    
+    .toast-container {
+      position: fixed;
+      top: 1rem;
+      right: 1rem;
+      z-index: 2000;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+    
+    .toast {
+      padding: 1rem 1.5rem;
+      background: var(--bg-secondary);
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-light);
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      min-width: 300px;
+      animation: toast-in 0.3s ease;
+    }
+    
+    .toast--success {
+      border-left: 4px solid var(--accent-success);
+    }
+    
+    .toast--error {
+      border-left: 4px solid var(--accent-error);
+    }
+    
+    @keyframes toast-in {
+      from {
+        transform: translateX(100%);
+        opacity: 0;
+      }
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
+    }
+    
+    @media (max-width: 1024px) {
+      .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      
+      .form-row {
+        grid-template-columns: 1fr;
+      }
+      
+      .student-profile {
+        grid-template-columns: 1fr;
+      }
+    }
+    
+    @media (max-width: 768px) {
       .admin-sidebar {
         transform: translateX(-100%);
         transition: transform 0.3s ease;
@@ -232,60 +592,64 @@
       }
       
       .stats-grid {
-        grid-template-columns: repeat(2, 1fr);
+        grid-template-columns: 1fr;
       }
     }
   </style>
 </head>
 <body x-data="adminApp()" x-init="init()">
+  <!-- Toast Notifications -->
+  <div class="toast-container">
+    <template x-for="toast in toasts" :key="toast.id">
+      <div class="toast" :class="'toast--' + toast.type">
+        <i class="ph" :class="toast.type === 'success' ? 'ph-check-circle' : 'ph-warning-circle'"></i>
+        <span x-text="toast.message"></span>
+      </div>
+    </template>
+  </div>
+
   <div class="admin-layout">
     <!-- Sidebar -->
-    <aside class="admin-sidebar">
-      <a href="/" class="admin-sidebar__logo">
-        <i class="ph ph-graduation-cap"></i>
-        F.O.T.F. Admin
-      </a>
+    <aside class="admin-sidebar" :class="{ 'admin-sidebar--open': mobileMenuOpen }">
+      <div class="admin-sidebar__header">
+        <a href="/" class="admin-sidebar__logo">
+          <i class="ph ph-graduation-cap"></i>
+          F.O.T.F. Admin
+        </a>
+      </div>
       
       <ul class="admin-sidebar__menu">
         <li class="admin-sidebar__item">
-          <a @click.prevent="currentView = 'dashboard'" 
+          <button @click="currentView = 'dashboard'" 
              class="admin-sidebar__link"
              :class="{ 'admin-sidebar__link--active': currentView === 'dashboard' }">
             <i class="ph ph-squares-four"></i>
             Dashboard
-          </a>
+          </button>
         </li>
         <li class="admin-sidebar__item">
-          <a @click.prevent="currentView = 'courses'" 
+          <button @click="currentView = 'courses'" 
              class="admin-sidebar__link"
              :class="{ 'admin-sidebar__link--active': currentView === 'courses' }">
             <i class="ph ph-books"></i>
             Courses
-          </a>
+          </button>
         </li>
         <li class="admin-sidebar__item">
-          <a @click.prevent="currentView = 'blog'" 
+          <button @click="currentView = 'blog'" 
              class="admin-sidebar__link"
              :class="{ 'admin-sidebar__link--active': currentView === 'blog' }">
             <i class="ph ph-article"></i>
             Blog Posts
-          </a>
+          </button>
         </li>
         <li class="admin-sidebar__item">
-          <a @click.prevent="currentView = 'students'" 
+          <button @click="currentView = 'students'" 
              class="admin-sidebar__link"
              :class="{ 'admin-sidebar__link--active': currentView === 'students' }">
             <i class="ph ph-users"></i>
             Students
-          </a>
-        </li>
-        <li class="admin-sidebar__item">
-          <a @click.prevent="currentView = 'analytics'" 
-             class="admin-sidebar__link"
-             :class="{ 'admin-sidebar__link--active': currentView === 'analytics' }">
-            <i class="ph ph-chart-line-up"></i>
-            Analytics
-          </a>
+          </button>
         </li>
         <li class="admin-sidebar__item" style="margin-top: 2rem;">
           <a href="/" class="admin-sidebar__link">
@@ -298,6 +662,11 @@
     
     <!-- Main Content -->
     <main class="admin-content">
+      <!-- Mobile Menu Toggle -->
+      <button @click="mobileMenuOpen = !mobileMenuOpen" class="btn btn--ghost" style="margin-bottom: 1rem; display: none;">
+        <i class="ph ph-list"></i>
+      </button>
+
       <!-- Dashboard View -->
       <div x-show="currentView === 'dashboard'">
         <div class="admin-header">
@@ -310,19 +679,11 @@
           <div class="stat-card">
             <div class="stat-card__label">Total Users</div>
             <div class="stat-card__value" x-text="stats.total_users || 0"></div>
-            <div class="stat-card__change stat-card__change--positive">
-              <i class="ph ph-trend-up"></i>
-              <span x-text="'+' + (stats.new_users_7d || 0) + ' this week'"></span>
-            </div>
           </div>
           
           <div class="stat-card">
             <div class="stat-card__label">Total Revenue</div>
             <div class="stat-card__value" x-text="'$' + (stats.total_revenue_dollars || '0.00')"></div>
-            <div class="stat-card__change stat-card__change--positive">
-              <i class="ph ph-trend-up"></i>
-              <span x-text="(stats.new_purchases_7d || 0) + ' new sales'"></span>
-            </div>
           </div>
           
           <div class="stat-card">
@@ -336,7 +697,6 @@
           </div>
         </div>
         
-        <!-- Recent Activity -->
         <h2 style="margin-bottom: 1rem;">Recent Activity</h2>
         <div class="data-table">
           <table>
@@ -352,7 +712,7 @@
                 <tr>
                   <td x-text="activity.user_email"></td>
                   <td>
-                    <span style="text-transform: capitalize;" x-text="activity.event_type.replace('_', ' ')"></span>
+                    <span style="text-transform: capitalize;" x-text="activity.event_type.replace(/_/g, ' ')"></span>
                   </td>
                   <td x-text="timeAgo(activity.created_at)"></td>
                 </tr>
@@ -380,6 +740,7 @@
             <thead>
               <tr>
                 <th>Title</th>
+                <th>Lessons</th>
                 <th>Price</th>
                 <th>Status</th>
                 <th>Actions</th>
@@ -388,50 +749,471 @@
             <tbody>
               <template x-for="course in courses" :key="course.id">
                 <tr>
-                  <td x-text="course.title"></td>
-                  <td x-text="'$' + (course.price / 100)"></td>
                   <td>
-                    <span :style="course.published ? 'color: var(--accent-success);' : 'color: var(--text-muted);'"
-                          x-text="course.published ? 'Published' : 'Draft'"></span>
+                    <div style="font-weight: 600;" x-text="course.title"></div>
+                    <div style="font-size: 0.8rem; color: var(--text-muted);" x-text="'/' + course.slug"></div>
+                  </td>
+                  <td x-text="course.lesson_count || '—'"></td>
+                  <td x-text="'$' + (course.price / 100).toFixed(2)"></td>
+                  <td>
+                    <span 
+                      :style="course.published ? 'color: var(--accent-success); font-weight: 500;' : 'color: var(--text-muted);'"
+                      x-text="course.published ? 'Published' : 'Draft'">
+                    </span>
                   </td>
                   <td>
-                    <button @click="editCourse(course)" class="btn btn--sm btn--outline">Edit</button>
+                    <div style="display: flex; gap: 0.5rem;">
+                      <button @click="manageLessons(course)" class="btn btn--sm btn--outline" title="Manage Lessons">
+                        <i class="ph ph-list-numbers"></i>
+                      </button>
+                      <button @click="editCourse(course)" class="btn btn--sm btn--outline" title="Edit">
+                        <i class="ph ph-pencil"></i>
+                      </button>
+                      <button @click="deleteCourse(course)" class="btn btn--sm btn--outline" style="color: var(--accent-error);" title="Delete">
+                        <i class="ph ph-trash"></i>
+                      </button>
+                    </div>
                   </td>
                 </tr>
               </template>
+              <tr x-show="courses.length === 0">
+                <td colspan="5" style="text-align: center; color: var(--text-muted); padding: 3rem;">
+                  No courses yet. Create your first course!
+                </td>
+              </tr>
             </tbody>
           </table>
         </div>
       </div>
       
-      <!-- Other views would be implemented similarly -->
+      <!-- Blog View -->
       <div x-show="currentView === 'blog'">
         <div class="admin-header">
           <h1 class="admin-header__title">Blog Posts</h1>
-          <button class="btn btn--primary">
+          <button @click="openBlogModal()" class="btn btn--primary">
             <i class="ph ph-plus"></i>
             New Post
           </button>
         </div>
-        <p style="color: var(--text-muted);">Blog management coming soon...</p>
+        
+        <div class="data-table">
+          <table>
+            <thead>
+              <tr>
+                <th>Title</th>
+                <th>Published</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <template x-for="post in blogPosts" :key="post.id">
+                <tr>
+                  <td>
+                    <div style="font-weight: 600;" x-text="post.title"></div>
+                    <div style="font-size: 0.8rem; color: var(--text-muted);" x-text="'/' + post.slug"></div>
+                  </td>
+                  <td x-text="post.published_at ? formatDate(post.published_at) : '—'"></td>
+                  <td>
+                    <span 
+                      :style="post.published ? 'color: var(--accent-success); font-weight: 500;' : 'color: var(--text-muted);'"
+                      x-text="post.published ? 'Published' : 'Draft'">
+                    </span>
+                  </td>
+                  <td>
+                    <div style="display: flex; gap: 0.5rem;">
+                      <button @click="editBlogPost(post)" class="btn btn--sm btn--outline">
+                        <i class="ph ph-pencil"></i>
+                      </button>
+                      <button @click="deleteBlogPost(post)" class="btn btn--sm btn--outline" style="color: var(--accent-error);">
+                        <i class="ph ph-trash"></i>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              </template>
+              <tr x-show="blogPosts.length === 0">
+                <td colspan="4" style="text-align: center; color: var(--text-muted); padding: 3rem;">
+                  No blog posts yet. Create your first post!
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </div>
       
+      <!-- Students View -->
       <div x-show="currentView === 'students'">
         <div class="admin-header">
           <h1 class="admin-header__title">Students</h1>
         </div>
-        <p style="color: var(--text-muted);">Student CRM coming soon...</p>
-      </div>
-      
-      <div x-show="currentView === 'analytics'">
-        <div class="admin-header">
-          <h1 class="admin-header__title">Analytics</h1>
+        
+        <div class="data-table">
+          <table>
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Joined</th>
+                <th>Courses</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <template x-for="student in students" :key="student.id">
+                <tr>
+                  <td x-text="student.name || '—'"></td>
+                  <td x-text="student.email"></td>
+                  <td x-text="formatDate(student.created_at)"></td>
+                  <td x-text="student.course_count || '—'"></td>
+                  <td>
+                    <button @click="viewStudent(student)" class="btn btn--sm btn--outline">
+                      <i class="ph ph-eye"></i>
+                      View
+                    </button>
+                  </td>
+                </tr>
+              </template>
+              <tr x-show="students.length === 0">
+                <td colspan="5" style="text-align: center; color: var(--text-muted); padding: 3rem;">
+                  No students yet.
+                </td>
+              </tr>
+            </tbody>
+          </table>
         </div>
-        <p style="color: var(--text-muted);">Detailed analytics coming soon...</p>
       </div>
     </main>
   </div>
-  
+
+  <!-- Course Modal -->
+  <div x-show="courseModalOpen" class="modal-overlay" @click.self="courseModalOpen = false">
+    <div class="modal">
+      <div class="modal__header">
+        <h2 class="modal__title" x-text="editingCourse ? 'Edit Course' : 'New Course'"></h2>
+        <button @click="courseModalOpen = false" class="modal__close">
+          <i class="ph ph-x"></i>
+        </button>
+      </div>
+      <div class="modal__body">
+        <form @submit.prevent="saveCourse">
+          <div class="form-section">
+            <div class="form-section__title">
+              <i class="ph ph-info"></i>
+              Basic Information
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="course-title">Course Title *</label>
+                <input type="text" id="course-title" x-model="courseForm.title" required placeholder="e.g., Marketing 101">
+              </div>
+              <div class="form-group">
+                <label for="course-slug">URL Slug *</label>
+                <input type="text" id="course-slug" x-model="courseForm.slug" required placeholder="e.g., marketing-101">
+                <small>Used in the URL: /courses/your-slug</small>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="course-description">Description</label>
+              <textarea id="course-description" x-model="courseForm.description" rows="3" placeholder="Brief description of the course..."></textarea>
+            </div>
+          </div>
+          
+          <div class="form-section">
+            <div class="form-section__title">
+              <i class="ph ph-currency-dollar"></i>
+              Pricing & Media
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="course-price">Price (in cents) *</label>
+                <input type="number" id="course-price" x-model.number="courseForm.price" required min="0" placeholder="39900">
+                <small>Enter amount in cents (e.g., 39900 = $399.00)</small>
+              </div>
+              <div class="form-group">
+                <label for="course-image">Cover Image URL</label>
+                <input type="url" id="course-image" x-model="courseForm.cover_image_url" placeholder="https://example.com/image.jpg">
+              </div>
+            </div>
+          </div>
+          
+          <div class="form-section">
+            <div class="form-section__title">
+              <i class="ph ph-gear"></i>
+              Settings
+            </div>
+            <div class="checkbox-group">
+              <input type="checkbox" id="course-published" x-model="courseForm.published">
+              <label for="course-published" style="margin: 0;">Publish this course (make it visible to students)</label>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal__footer">
+        <button @click="courseModalOpen = false" class="btn btn--ghost">Cancel</button>
+        <button @click="saveCourse" class="btn btn--primary" :disabled="saving">
+          <span x-show="!saving" x-text="editingCourse ? 'Save Changes' : 'Create Course'"></span>
+          <span x-show="saving">Saving...</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Lessons Manager Modal -->
+  <div x-show="lessonsModalOpen" class="modal-overlay" @click.self="lessonsModalOpen = false">
+    <div class="modal modal--large">
+      <div class="modal__header">
+        <h2 class="modal__title" x-text="'Manage Lessons: ' + (activeCourse?.title || '')"></h2>
+        <button @click="lessonsModalOpen = false" class="modal__close">
+          <i class="ph ph-x"></i>
+        </button>
+      </div>
+      <div class="modal__body">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+          <p style="color: var(--text-secondary);">Drag and drop to reorder lessons</p>
+          <button @click="openLessonModal()" class="btn btn--primary btn--sm">
+            <i class="ph ph-plus"></i>
+            Add Lesson
+          </button>
+        </div>
+        
+        <ul class="lessons-list" id="lessons-sortable" x-ref="lessonsList">
+          <template x-for="(lesson, index) in lessons" :key="lesson.id">
+            <li class="lesson-item" :data-id="lesson.id">
+              <div class="lesson-item__drag">
+                <i class="ph ph-dots-six-vertical"></i>
+              </div>
+              <div class="lesson-item__number" x-text="index + 1"></div>
+              <div class="lesson-item__content">
+                <div class="lesson-item__title" x-text="lesson.title"></div>
+                <div class="lesson-item__meta">
+                  <span x-show="lesson.is_free_preview" class="lesson-item__badge lesson-item__badge--free">Free Preview</span>
+                  <span x-show="!lesson.published" class="lesson-item__badge lesson-item__badge--draft">Draft</span>
+                  <span x-show="lesson.video_url" style="color: var(--text-muted);"><i class="ph ph-video"></i> Video</span>
+                </div>
+              </div>
+              <div class="lesson-item__actions">
+                <button @click="editLesson(lesson)" class="btn btn--icon btn--ghost" title="Edit">
+                  <i class="ph ph-pencil"></i>
+                </button>
+                <button @click="deleteLesson(lesson)" class="btn btn--icon btn--ghost" style="color: var(--accent-error);" title="Delete">
+                  <i class="ph ph-trash"></i>
+                </button>
+              </div>
+            </li>
+          </template>
+        </ul>
+        
+        <div x-show="lessons.length === 0" style="text-align: center; padding: 3rem; color: var(--text-muted);">
+          <i class="ph ph-list-numbers" style="font-size: 3rem; margin-bottom: 1rem;"></i>
+          <p>No lessons yet. Add your first lesson!</p>
+        </div>
+      </div>
+      <div class="modal__footer">
+        <button @click="lessonsModalOpen = false" class="btn btn--ghost">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Lesson Modal -->
+  <div x-show="lessonModalOpen" class="modal-overlay" @click.self="lessonModalOpen = false">
+    <div class="modal">
+      <div class="modal__header">
+        <h2 class="modal__title" x-text="editingLesson ? 'Edit Lesson' : 'New Lesson'"></h2>
+        <button @click="lessonModalOpen = false" class="modal__close">
+          <i class="ph ph-x"></i>
+        </button>
+      </div>
+      <div class="modal__body">
+        <form @submit.prevent="saveLesson">
+          <div class="form-row">
+            <div class="form-group">
+              <label for="lesson-title">Lesson Title *</label>
+              <input type="text" id="lesson-title" x-model="lessonForm.title" required placeholder="e.g., Introduction to Marketing">
+            </div>
+            <div class="form-group">
+              <label for="lesson-slug">URL Slug *</label>
+              <input type="text" id="lesson-slug" x-model="lessonForm.slug" required placeholder="e.g., introduction">
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <label for="lesson-video">Video URL</label>
+            <input type="url" id="lesson-video" x-model="lessonForm.video_url" placeholder="YouTube embed URL or direct video URL">
+          </div>
+          
+          <div class="checkbox-group">
+            <input type="checkbox" id="lesson-free" x-model="lessonForm.is_free_preview">
+            <label for="lesson-free" style="margin: 0;">Free Preview (available without purchase)</label>
+          </div>
+          
+          <div class="checkbox-group">
+            <input type="checkbox" id="lesson-published" x-model="lessonForm.published">
+            <label for="lesson-published" style="margin: 0;">Published</label>
+          </div>
+        </form>
+      </div>
+      <div class="modal__footer">
+        <button @click="lessonModalOpen = false" class="btn btn--ghost">Cancel</button>
+        <button @click="saveLesson" class="btn btn--primary" :disabled="saving">
+          <span x-show="!saving" x-text="editingLesson ? 'Save Changes' : 'Create Lesson'"></span>
+          <span x-show="saving">Saving...</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Blog Post Modal -->
+  <div x-show="blogModalOpen" class="modal-overlay" @click.self="blogModalOpen = false">
+    <div class="modal modal--large">
+      <div class="modal__header">
+        <h2 class="modal__title" x-text="editingPost ? 'Edit Blog Post' : 'New Blog Post'"></h2>
+        <button @click="blogModalOpen = false" class="modal__close">
+          <i class="ph ph-x"></i>
+        </button>
+      </div>
+      <div class="modal__body">
+        <form @submit.prevent="saveBlogPost">
+          <div class="form-row">
+            <div class="form-group">
+              <label for="blog-title">Post Title *</label>
+              <input type="text" id="blog-title" x-model="blogForm.title" required placeholder="e.g., 10 Marketing Tips for 2026">
+            </div>
+            <div class="form-group">
+              <label for="blog-slug">URL Slug *</label>
+              <input type="text" id="blog-slug" x-model="blogForm.slug" required placeholder="e.g., 10-marketing-tips-2026">
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <label for="blog-excerpt">Excerpt</label>
+            <textarea id="blog-excerpt" x-model="blogForm.excerpt" rows="2" placeholder="Brief summary for blog listing..."></textarea>
+          </div>
+          
+          <div class="form-row">
+            <div class="form-group">
+              <label for="blog-image">Cover Image URL</label>
+              <input type="url" id="blog-image" x-model="blogForm.cover_image_url" placeholder="https://example.com/image.jpg">
+            </div>
+            <div class="form-group">
+              <label for="blog-meta-title">Meta Title (SEO)</label>
+              <input type="text" id="blog-meta-title" x-model="blogForm.meta_title" placeholder="Title for search engines">
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <label for="blog-meta-description">Meta Description (SEO)</label>
+            <input type="text" id="blog-meta-description" x-model="blogForm.meta_description" maxlength="160" placeholder="Description for search results">
+            <small x-text="(blogForm.meta_description?.length || 0) + ' / 160 characters'"></small>
+          </div>
+          
+          <div class="form-group">
+            <label>Content</label>
+            <div id="blog-editor" class="editor-container"></div>
+          </div>
+          
+          <div class="checkbox-group">
+            <input type="checkbox" id="blog-published" x-model="blogForm.published">
+            <label for="blog-published" style="margin: 0;">Publish this post</label>
+          </div>
+        </form>
+      </div>
+      <div class="modal__footer">
+        <button @click="blogModalOpen = false" class="btn btn--ghost">Cancel</button>
+        <button @click="saveBlogPost" class="btn btn--primary" :disabled="saving">
+          <span x-show="!saving" x-text="editingPost ? 'Save Changes' : 'Publish Post'"></span>
+          <span x-show="saving">Saving...</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Student Detail Modal -->
+  <div x-show="studentModalOpen" class="modal-overlay" @click.self="studentModalOpen = false">
+    <div class="modal modal--large">
+      <div class="modal__header">
+        <h2 class="modal__title">Student Profile</h2>
+        <button @click="studentModalOpen = false" class="modal__close">
+          <i class="ph ph-x"></i>
+        </button>
+      </div>
+      <div class="modal__body">
+        <div class="student-profile">
+          <div class="student-card">
+            <div class="student-card__avatar" x-text="activeStudent?.name?.[0] || activeStudent?.email?.[0] || '?'"></div>
+            <div class="student-card__name" x-text="activeStudent?.name || 'Unknown'"></div>
+            <div class="student-card__email" x-text="activeStudent?.email"></div>
+            
+            <div class="student-card__stats">
+              <div>
+                <div class="student-card__stat-value" x-text="activeStudent?.login_streak || 0"></div>
+                <div class="student-card__stat-label">Day Streak</div>
+              </div>
+              <div>
+                <div class="student-card__stat-value" x-text="studentDetail?.purchases?.length || 0"></div>
+                <div class="student-card__stat-label">Courses</div>
+              </div>
+            </div>
+            
+            <div style="margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid rgba(0,0,0,0.1);">
+              <div style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.25rem;">Joined</div>
+              <div x-text="formatDate(activeStudent?.created_at)"></div>
+            </div>
+            
+            <div style="margin-top: 1rem;">
+              <div style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.25rem;">Last Login</div>
+              <div x-text="formatDate(activeStudent?.last_login_at)"></div>
+            </div>
+          </div>
+          
+          <div>
+            <h3 style="margin-bottom: 1rem;">Activity Timeline</h3>
+            <div class="timeline">
+              <template x-for="item in studentDetail?.timeline" :key="item.date">
+                <div class="timeline-item">
+                  <div class="timeline-item__date" x-text="formatDate(item.date)"></div>
+                  <div class="timeline-item__title" x-text="formatEventType(item.event)"></div>
+                  <div class="timeline-item__description" x-text="JSON.stringify(item.metadata)"></div>
+                </div>
+              </template>
+              <div x-show="!studentDetail?.timeline?.length" style="color: var(--text-muted);">
+                No activity recorded yet.
+              </div>
+            </div>
+            
+            <h3 style="margin: 2rem 0 1rem;">Purchased Courses</h3>
+            <div class="data-table">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Course</th>
+                    <th>Purchased</th>
+                    <th>Amount</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <template x-for="purchase in studentDetail?.purchases" :key="purchase.id">
+                    <tr>
+                      <td x-text="purchase.course_title"></td>
+                      <td x-text="formatDate(purchase.purchased_at)"></td>
+                      <td x-text="'$' + (purchase.amount / 100).toFixed(2)"></td>
+                    </tr>
+                  </template>
+                  <tr x-show="!studentDetail?.purchases?.length">
+                    <td colspan="3" style="text-align: center; color: var(--text-muted);">No purchases yet</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal__footer">
+        <button @click="studentModalOpen = false" class="btn btn--ghost">Close</button>
+      </div>
+    </div>
+  </div>
+
   <script>
     const API_BASE_URL = window.location.origin.includes('localhost') 
       ? 'http://localhost:8788' 
@@ -439,11 +1221,43 @@
     
     function adminApp() {
       return {
+        // View state
         currentView: 'dashboard',
+        mobileMenuOpen: false,
+        
+        // Data
         stats: {},
         courses: [],
+        lessons: [],
+        blogPosts: [],
+        students: [],
         recentActivity: [],
-        loading: true,
+        
+        // Modals
+        courseModalOpen: false,
+        lessonsModalOpen: false,
+        lessonModalOpen: false,
+        blogModalOpen: false,
+        studentModalOpen: false,
+        
+        // Form state
+        courseForm: { title: '', slug: '', description: '', price: 39900, cover_image_url: '', published: false },
+        lessonForm: { title: '', slug: '', video_url: '', is_free_preview: false, published: true },
+        blogForm: { title: '', slug: '', excerpt: '', content_html: '', cover_image_url: '', meta_title: '', meta_description: '', published: false },
+        
+        // Editing state
+        editingCourse: false,
+        editingLesson: false,
+        editingPost: false,
+        activeCourse: null,
+        activeStudent: null,
+        studentDetail: null,
+        
+        // UI state
+        saving: false,
+        toasts: [],
+        quillEditor: null,
+        sortable: null,
         
         async init() {
           const token = localStorage.getItem('token');
@@ -452,8 +1266,31 @@
             return;
           }
           
-          await this.loadDashboard();
-          await this.loadCourses();
+          // Check if admin
+          try {
+            const meRes = await fetch(`${API_BASE_URL}/api/auth/me`, {
+              headers: { 'Authorization': `Bearer ${token}` }
+            });
+            const meData = await meRes.json();
+            if (meData.role !== 'admin') {
+              window.location.href = '/dashboard/';
+              return;
+            }
+          } catch (e) {
+            window.location.href = '/login.html';
+            return;
+          }
+          
+          await this.loadAllData();
+        },
+        
+        async loadAllData() {
+          await Promise.all([
+            this.loadDashboard(),
+            this.loadCourses(),
+            this.loadBlogPosts(),
+            this.loadStudents()
+          ]);
         },
         
         async loadDashboard() {
@@ -496,12 +1333,364 @@
           }
         },
         
+        async loadBlogPosts() {
+          try {
+            const response = await fetch(`${API_BASE_URL}/api/admin/blog`, {
+              headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+            });
+            
+            if (response.ok) {
+              const data = await response.json();
+              this.blogPosts = data.posts;
+            }
+          } catch (error) {
+            console.error('Failed to load blog posts:', error);
+          }
+        },
+        
+        async loadStudents() {
+          try {
+            const response = await fetch(`${API_BASE_URL}/api/admin/students`, {
+              headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+            });
+            
+            if (response.ok) {
+              const data = await response.json();
+              this.students = data.students;
+            }
+          } catch (error) {
+            console.error('Failed to load students:', error);
+          }
+        },
+        
+        // Course methods
         openCourseModal() {
-          alert('Course creation modal would open here');
+          this.editingCourse = false;
+          this.courseForm = { title: '', slug: '', description: '', price: 39900, cover_image_url: '', published: false };
+          this.courseModalOpen = true;
         },
         
         editCourse(course) {
-          alert(`Edit course: ${course.title}`);
+          this.editingCourse = true;
+          this.activeCourse = course;
+          this.courseForm = { ...course };
+          this.courseModalOpen = true;
+        },
+        
+        async saveCourse() {
+          this.saving = true;
+          try {
+            const url = this.editingCourse 
+              ? `${API_BASE_URL}/api/admin/courses/${this.activeCourse.id}`
+              : `${API_BASE_URL}/api/admin/courses`;
+            
+            const method = this.editingCourse ? 'PATCH' : 'POST';
+            
+            const response = await fetch(url, {
+              method,
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
+              },
+              body: JSON.stringify(this.courseForm)
+            });
+            
+            if (response.ok) {
+              this.showToast(this.editingCourse ? 'Course updated' : 'Course created', 'success');
+              this.courseModalOpen = false;
+              await this.loadCourses();
+            } else {
+              const data = await response.json();
+              this.showToast(data.error?.message || 'Failed to save course', 'error');
+            }
+          } catch (error) {
+            this.showToast('An error occurred', 'error');
+          } finally {
+            this.saving = false;
+          }
+        },
+        
+        async deleteCourse(course) {
+          if (!confirm(`Are you sure you want to delete "${course.title}"? This cannot be undone.`)) return;
+          
+          try {
+            const response = await fetch(`${API_BASE_URL}/api/admin/courses/${course.id}`, {
+              method: 'DELETE',
+              headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+            });
+            
+            if (response.ok) {
+              this.showToast('Course deleted', 'success');
+              await this.loadCourses();
+            } else {
+              this.showToast('Failed to delete course', 'error');
+            }
+          } catch (error) {
+            this.showToast('An error occurred', 'error');
+          }
+        },
+        
+        // Lessons methods
+        async manageLessons(course) {
+          this.activeCourse = course;
+          await this.loadLessons(course.id);
+          this.lessonsModalOpen = true;
+          
+          // Initialize sortable after DOM update
+          this.$nextTick(() => {
+            if (this.$refs.lessonsList) {
+              this.sortable = new Sortable(this.$refs.lessonsList, {
+                animation: 150,
+                handle: '.lesson-item__drag',
+                ghostClass: 'sortable-ghost',
+                dragClass: 'sortable-drag',
+                onEnd: (evt) => this.reorderLessons(evt)
+              });
+            }
+          });
+        },
+        
+        async loadLessons(courseId) {
+          try {
+            const response = await fetch(`${API_BASE_URL}/api/admin/courses/${courseId}`, {
+              headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+            });
+            
+            if (response.ok) {
+              const data = await response.json();
+              this.lessons = data.lessons;
+            }
+          } catch (error) {
+            console.error('Failed to load lessons:', error);
+          }
+        },
+        
+        openLessonModal() {
+          this.editingLesson = false;
+          this.lessonForm = { title: '', slug: '', video_url: '', is_free_preview: false, published: true };
+          this.lessonModalOpen = true;
+        },
+        
+        editLesson(lesson) {
+          this.editingLesson = true;
+          this.lessonForm = { ...lesson };
+          this.lessonModalOpen = true;
+        },
+        
+        async saveLesson() {
+          this.saving = true;
+          try {
+            const url = this.editingLesson 
+              ? `${API_BASE_URL}/api/admin/courses/${this.activeCourse.id}/lessons/${this.lessonForm.id}`
+              : `${API_BASE_URL}/api/admin/courses/${this.activeCourse.id}/lessons`;
+            
+            const method = this.editingLesson ? 'PATCH' : 'POST';
+            
+            const response = await fetch(url, {
+              method,
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
+              },
+              body: JSON.stringify(this.lessonForm)
+            });
+            
+            if (response.ok) {
+              this.showToast(this.editingLesson ? 'Lesson updated' : 'Lesson created', 'success');
+              this.lessonModalOpen = false;
+              await this.loadLessons(this.activeCourse.id);
+            } else {
+              const data = await response.json();
+              this.showToast(data.error?.message || 'Failed to save lesson', 'error');
+            }
+          } catch (error) {
+            this.showToast('An error occurred', 'error');
+          } finally {
+            this.saving = false;
+          }
+        },
+        
+        async deleteLesson(lesson) {
+          if (!confirm(`Delete "${lesson.title}"?`)) return;
+          
+          try {
+            const response = await fetch(`${API_BASE_URL}/api/admin/courses/${this.activeCourse.id}/lessons/${lesson.id}`, {
+              method: 'DELETE',
+              headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+            });
+            
+            if (response.ok) {
+              this.showToast('Lesson deleted', 'success');
+              await this.loadLessons(this.activeCourse.id);
+            }
+          } catch (error) {
+            this.showToast('Failed to delete lesson', 'error');
+          }
+        },
+        
+        async reorderLessons(evt) {
+          // Update local order
+          const item = this.lessons.splice(evt.oldIndex, 1)[0];
+          this.lessons.splice(evt.newIndex, 0, item);
+          
+          // Update order numbers
+          this.lessons.forEach((lesson, index) => {
+            lesson.order = index;
+          });
+          
+          // Save to server
+          try {
+            for (const lesson of this.lessons) {
+              await fetch(`${API_BASE_URL}/api/admin/courses/${this.activeCourse.id}/lessons/${lesson.id}`, {
+                method: 'PATCH',
+                headers: {
+                  'Content-Type': 'application/json',
+                  'Authorization': `Bearer ${localStorage.getItem('token')}`
+                },
+                body: JSON.stringify({ order: lesson.order })
+              });
+            }
+            this.showToast('Lesson order saved', 'success');
+          } catch (error) {
+            this.showToast('Failed to save order', 'error');
+          }
+        },
+        
+        // Blog methods
+        openBlogModal() {
+          this.editingPost = false;
+          this.blogForm = { title: '', slug: '', excerpt: '', content_html: '', cover_image_url: '', meta_title: '', meta_description: '', published: false };
+          this.blogModalOpen = true;
+          
+          this.$nextTick(() => {
+            this.initQuill();
+          });
+        },
+        
+        editBlogPost(post) {
+          this.editingPost = true;
+          this.blogForm = { ...post };
+          this.blogModalOpen = true;
+          
+          this.$nextTick(() => {
+            this.initQuill();
+            if (this.quillEditor) {
+              this.quillEditor.root.innerHTML = post.content_html || '';
+            }
+          });
+        },
+        
+        initQuill() {
+          if (this.quillEditor) {
+            this.quillEditor.destroy();
+          }
+          
+          this.quillEditor = new Quill('#blog-editor', {
+            theme: 'snow',
+            placeholder: 'Write your blog post content here...',
+            modules: {
+              toolbar: [
+                [{ 'header': [1, 2, 3, false] }],
+                ['bold', 'italic', 'underline', 'strike'],
+                [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                ['link', 'blockquote', 'code-block'],
+                ['clean']
+              ]
+            }
+          });
+        },
+        
+        async saveBlogPost() {
+          this.saving = true;
+          
+          // Get content from Quill
+          if (this.quillEditor) {
+            this.blogForm.content_html = this.quillEditor.root.innerHTML;
+          }
+          
+          try {
+            const url = this.editingPost 
+              ? `${API_BASE_URL}/api/admin/blog/${this.blogForm.id}`
+              : `${API_BASE_URL}/api/admin/blog`;
+            
+            const method = this.editingPost ? 'PATCH' : 'POST';
+            
+            const response = await fetch(url, {
+              method,
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
+              },
+              body: JSON.stringify(this.blogForm)
+            });
+            
+            if (response.ok) {
+              this.showToast(this.editingPost ? 'Post updated' : 'Post published', 'success');
+              this.blogModalOpen = false;
+              await this.loadBlogPosts();
+            } else {
+              const data = await response.json();
+              this.showToast(data.error?.message || 'Failed to save post', 'error');
+            }
+          } catch (error) {
+            this.showToast('An error occurred', 'error');
+          } finally {
+            this.saving = false;
+          }
+        },
+        
+        async deleteBlogPost(post) {
+          if (!confirm(`Delete "${post.title}"?`)) return;
+          
+          try {
+            const response = await fetch(`${API_BASE_URL}/api/admin/blog/${post.id}`, {
+              method: 'DELETE',
+              headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+            });
+            
+            if (response.ok) {
+              this.showToast('Post deleted', 'success');
+              await this.loadBlogPosts();
+            }
+          } catch (error) {
+            this.showToast('Failed to delete post', 'error');
+          }
+        },
+        
+        // Student methods
+        async viewStudent(student) {
+          this.activeStudent = student;
+          
+          try {
+            const response = await fetch(`${API_BASE_URL}/api/admin/students/${student.id}`, {
+              headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+            });
+            
+            if (response.ok) {
+              this.studentDetail = await response.json();
+              this.studentModalOpen = true;
+            }
+          } catch (error) {
+            this.showToast('Failed to load student details', 'error');
+          }
+        },
+        
+        // Utilities
+        showToast(message, type = 'success') {
+          const id = Date.now();
+          this.toasts.push({ id, message, type });
+          setTimeout(() => {
+            this.toasts = this.toasts.filter(t => t.id !== id);
+          }, 3000);
+        },
+        
+        formatDate(dateString) {
+          if (!dateString) return '—';
+          return new Date(dateString).toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric'
+          });
         },
         
         timeAgo(dateString) {
@@ -525,6 +1714,16 @@
             }
           }
           return 'Just now';
+        },
+        
+        formatEventType(event) {
+          const map = {
+            'user_registered': 'Joined platform',
+            'course_purchased': 'Purchased course',
+            'lesson_completed': 'Completed lesson',
+            'consultation_booked': 'Booked consultation'
+          };
+          return map[event] || event.replace(/_/g, ' ');
         }
       };
     }
